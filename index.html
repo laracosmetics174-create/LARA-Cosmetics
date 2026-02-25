@@ -219,7 +219,8 @@
     <input type="text" id="customerPhone" placeholder="Phone Number">
     <input type="email" id="customerEmail" placeholder="Customer Email (optional)">
     <textarea id="customerAddress" placeholder="Delivery Address"></textarea>
-    <button class="order-btn" id="orderBtn" onclick="placeOrder()">📩 Place Order   <br> <p> Please wait... Confirming your order      </p>       </button>
+    <button class="order-btn" id="orderBtn" onclick="placeOrder()">📩 Place Order</button>
+<p id="orderMessage" style="margin-top:8px;font-size:0.9rem;opacity:0.8;"></p>
 
   </div>
 </div>
@@ -400,6 +401,10 @@ function renderCart(){
    PLACE ORDER (EMAILJS AUTO SEND)
 =========================== */
 function placeOrder(){
+
+  const messageBox = document.getElementById("orderMessage");
+  const orderBtn = document.getElementById("orderBtn");
+
   if(cart.length === 0){
     alert("Your cart is empty!");
     return;
@@ -414,6 +419,11 @@ function placeOrder(){
     alert("Please fill Name, Phone, and Address!");
     return;
   }
+
+  // 🔄 Show loading message
+  messageBox.innerHTML = "⏳ Please wait... Confirming your order";
+  messageBox.style.color = "#ffae00";
+  orderBtn.disabled = true;
 
   let orderText = "";
   let total = 0;
@@ -434,11 +444,12 @@ function placeOrder(){
     total_price: total
   };
 
-
-emailjs.send("service_jole3ot", "template_n8pbmd8", templateParams)
+  emailjs.send("service_jole3ot", "template_n8pbmd8", templateParams)
 
     .then(() => {
-      alert("✅ Order sent successfully to SHEWA Cosmetics!");
+
+      messageBox.innerHTML = "✅ Order Confirmed Successfully!";
+      messageBox.style.color = "#00ff99";
 
       cart = [];
       localStorage.removeItem("cart");
@@ -449,9 +460,17 @@ emailjs.send("service_jole3ot", "template_n8pbmd8", templateParams)
       document.getElementById("customerPhone").value = "";
       document.getElementById("customerEmail").value = "";
       document.getElementById("customerAddress").value = "";
+
+      orderBtn.disabled = false;
+
     })
     .catch((error) => {
-      alert("❌ Order send failed! Check EmailJS setup.");
+
+      messageBox.innerHTML = "❌ Order Failed! Please try again.";
+      messageBox.style.color = "red";
+
+      orderBtn.disabled = false;
+
       console.log("EmailJS Error:", error);
     });
 }
