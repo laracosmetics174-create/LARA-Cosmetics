@@ -1,80 +1,192 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>LARA Cosmetics Shop</title>
+<meta charset="UTF-8">
+<title>LARA Admin Panel</title>
 <style>
-/* (ඔයාගේ පරණ style එකම තියෙනවා - මම කෙටියෙන් තියනවා) */
-*{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,sans-serif;}
-body{background:linear-gradient(120deg,#2a003f,#5e006e,#a1008c);color:white;overflow-x:hidden;}
-/* ... ඔයාගේ සියලුම style එකම මෙතන තියෙනවා ... */
-#statusMessage{text-align:center;padding:15px;margin:20px;color:#ffae00;font-weight:bold;}
+body{
+  font-family:Segoe UI;
+  background:linear-gradient(120deg,#2a003f,#5e006e);
+  color:white;
+  padding:40px;
+}
+.container{max-width:900px;margin:auto;}
+h1{color:#ffae00;text-align:center;margin-bottom:30px;}
+form{
+  background:rgba(255,255,255,0.1);
+  padding:20px;border-radius:15px;
+}
+input,select{width:100%;padding:10px;margin-top:10px;border:none;border-radius:8px;}
+button{margin-top:15px;padding:12px;border:none;border-radius:8px;font-weight:bold;cursor:pointer;}
+.add-btn{background:#ff4fd8;color:black;}
+.update-btn{background:#ffae00;color:black;}
+.delete-btn{background:red;color:white;padding:5px 10px;font-size:0.8rem;}
+table{width:100%;margin-top:30px;border-collapse:collapse;}
+th,td{padding:10px;border-bottom:1px solid rgba(255,255,255,0.2);}
+.edit-btn{background:#ffae00;color:black;padding:5px 10px;font-size:0.8rem;}
 </style>
 </head>
 <body>
-<header>
-  <div class="logo">LARA Cosmetics</div>
-  <nav>
-    <a href="#products">Shop</a>
-    <a href="#about">About</a>
-    <button class="cart-btn" onclick="toggleCart()">🛒 Cart (<span id="cartCount">0</span>)</button>
-  </nav>
-</header>
+<div class="container">
+<h1>Admin Panel - LARA Cosmetics</h1>
+<form id="productForm">
+<input type="hidden" id="productId">
+<input type="text" id="name" placeholder="Product Name" required>
+<input type="number" id="price" placeholder="Price" required>
+<select id="category">
+<option value="Skincare">Skincare</option>
+<option value="Makeup">Makeup</option>
+<option value="Perfume">Perfume</option>
+<option value="Accessories">Accessories</option>
+</select>
+<input type="text" id="image" placeholder="Image URL (Cloud/Imgur/Pexels link)" required>
+<button type="submit" class="add-btn">Save Product</button>
+</form>
 
-<section class="hero">
-  <h1>Beauty That Shines ✨</h1>
-  <p>Cosmetics Collection | Lipsticks | Skincare | Perfumes | Makeup Kits</p>
-</section>
+<table>
+<thead>
+<tr>
+<th>ID</th><th>Name</th><th>Price</th><th>Category</th><th>Image URL</th><th>Actions</th>
+</tr>
+</thead>
+<tbody id="productTable"></tbody>
+</table>
+</div>
 
-<section class="products" id="products">
-  <h2>Our Products 💄</h2>
-  <div id="statusMessage"></div>
-  <div class="product-grid" id="productGrid"></div>
-</section>
-
-<!-- ඔයාගේ cart sidebar සහ footer සියල්ලම තියෙනවා (ඔයාගේ පරණ කෝඩ් එකම) -->
-
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <script>
-// EMAILJS
-emailjs.init("W_o_RiuSlVn_zCxlp");
+const API_URL = "https://api.sheetbest.com/sheets/8bdd385a-80dd-470f-bb2f-f3fdd5c909e4";
 
-// API
-const API_URL = "https://api.sheetbest.com/sheets/07108683-4692-4aa1-9c3a-95f2845f0c37";
+let editingRowNumber = null;  // real row number in sheet (1-based, after header)
+let allProducts = [];         // full data array to track rows
 
-let products = [];
-
+// Load products + remember real row numbers
 async function loadProducts() {
-  const status = document.getElementById("statusMessage");
-  status.innerHTML = "🔄 Loading products from sheet...";
-
   try {
-    const response = await fetch(API_URL);
-    if (!response.ok) throw new Error("Connection failed");
+    const res = await fetch(API_URL);
+    if (!res.ok) throw new Error("Failed to load products");
+    
+    const data = await res.json();
+    allProducts = data;
 
-    const data = await response.json();
+    const table = document.getElementById("productTable");
+    table.innerHTML = "";
 
-    products = data.map(item => ({
-      id: Number(item.id) || Date.now(),
-      name: item.name || "No Name",
-      price: Number(item.price) || 0,
-      category: item.category || "Other",
-      image: item.image || ""
-    }));
+    data.forEach((p, index) => {
+      const rowNumber = index + 1; // row 1 = first data row
 
-    status.innerHTML = `✅ ${products.length} products loaded!`;
-    renderProducts();
-  } catch (error) {
-    console.error(error);
-    status.innerHTML = `❌ Error loading products<br><small>Please check SheetBest connection</small>`;
-    document.getElementById("productGrid").innerHTML = `<p style="text-align:center;opacity:0.7;font-size:1.3rem;">No products available right now 😢</p>`;
+      table.innerHTML += `
+        <tr>
+          <td>${p.id || '-'}</td>
+          <td>${p.name || ''}</td>
+          <td>${p.price || ''}</td>
+          <td>${p.category || ''}</td>
+          <td style="max-width:200px;word-break:break-all;">${p.image ? '<a href="'+p.image+'" target="_blank">View</a>' : '-'}</td>
+          <td>
+            <button class="edit-btn" onclick="editProduct(${rowNumber}, '${escapeHtml(p.id || '')}', '${escapeHtml(p.name || '')}', '${p.price || ''}', '${escapeHtml(p.category || '')}', '${escapeHtml(p.image || '')}')">Edit</button>
+            <button class="delete-btn" onclick="deleteProduct(${rowNumber})">Delete</button>
+          </td>
+        </tr>`;
+    });
+  } catch (err) {
+    console.error("Load error:", err);
+    alert("Products ලෝඩ් කරන්න බැරි වුණා. Console බලන්න.");
   }
 }
 
-/* ඔයාගේ පරණ cart system, renderProducts, placeOrder සියල්ලම මෙතන තියෙනවා (ඔයාගේ කෝඩ් එකම) */
+// Escape HTML to prevent XSS in onclick
+function escapeHtml(unsafe) {
+  return unsafe
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
 
-// INIT
+// Form submit → Add or Update
+document.getElementById("productForm").addEventListener("submit", async function(e) {
+  e.preventDefault();
+
+  const name     = document.getElementById("name").value.trim();
+  const price    = document.getElementById("price").value.trim();
+  const category = document.getElementById("category").value;
+  const image    = document.getElementById("image").value.trim();
+
+  if (!name || !price || !image) {
+    alert("නම, මිල, රූප URL ඔක්කොම දාන්න!");
+    return;
+  }
+
+  const product = {
+    id: document.getElementById("productId").value || Date.now().toString(),
+    name,
+    price,
+    category,
+    image
+  };
+
+  let url = API_URL;
+  let method = "POST";
+
+  if (editingRowNumber !== null) {
+    url = `${API_URL}/${editingRowNumber}`;
+    method = "PUT";
+  }
+
+  try {
+    const res = await fetch(url, {
+      method: method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(product)
+    });
+
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new Error(`Error ${res.status}: ${errText}`);
+    }
+
+    this.reset();
+    editingRowNumber = null;
+    document.getElementById("productId").value = "";
+    loadProducts();
+  } catch (err) {
+    console.error("Save error:", err);
+    alert("Save කරන්න බැරි වුණා:\n" + err.message);
+  }
+});
+
+// Fill form for edit
+function editProduct(rowNumber, id, name, price, category, image) {
+  editingRowNumber = rowNumber;
+  document.getElementById("productId").value = id;
+  document.getElementById("name").value = name;
+  document.getElementById("price").value = price;
+  document.getElementById("category").value = category;
+  document.getElementById("image").value = image;
+}
+
+// Delete product by row number
+async function deleteProduct(rowNumber) {
+  if (!confirm("මේ product එක ඉවත් කරන්නද?")) return;
+
+  try {
+    const res = await fetch(`${API_URL}/${rowNumber}`, {
+      method: "DELETE"
+    });
+
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new Error(`Delete error ${res.status}: ${errText}`);
+    }
+
+    loadProducts();
+  } catch (err) {
+    console.error("Delete error:", err);
+    alert("Delete කරන්න බැරි වුණා:\n" + err.message);
+  }
+}
+
+// Initial load
 loadProducts();
 </script>
 </body>
