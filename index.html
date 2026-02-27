@@ -239,29 +239,43 @@ emailjs.init("U2idDXII4VQnvsnAd"); // <-- Paste your EmailJS Public Key here
 =========================== */
 let products = [];
 
-// page load වෙනකොට localStorage එකෙන් ගන්න
-function loadProducts() {
-    const savedProducts = localStorage.getItem("shewa_products");
-    if (savedProducts) {
-        products = JSON.parse(savedProducts);
-    } else {
-        // එකම default products තියාගන්න ඕන නම් මෙතන දාන්න
-        products = [
-            { id: 1, name: "Glow Face Cream", price: 2500, category: "Skincare", image: "..." },
-            // අනිත් default ටික
-        ];
-        saveProducts(); // පළවෙනි පාරට save කරගන්න
-    }
+async function loadProducts() {
+  try {
+    const sheetId = '1wnuRfxmPo1yBYt_GevpKE8urzBtKqelZ2vFyOzC1xUw/edit?usp=sharing';  // ← මෙතන ඔයාගේ SHEET_ID paste කරන්න
+    const gid = '0';  // default sheet එක නම් 0, වෙන sheet එකක් නම් gid එක බලන්න
+
+    const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=${gid}`;
+
+    const response = await fetch(url);
+    const text = await response.text();
+
+    // Google weird prefix/suffix එක remove කරන්න
+    const jsonString = text
+      .replace(/^google\.visualization\.Query\.setResponse\(/, '')
+      .replace(/\);$/, '');
+
+    const data = JSON.parse(jsonString);
+
+    // Rows ටික ගන්න (header row skip කරලා)
+    products = data.table.rows.map((row, index) => {
+      if (index === 0) return null; // header skip (optional, ඔයාට ඕන නම්)
+      const cells = row.c || [];
+      return {
+        id: index + 1,  // auto id දෙන්න ඕන නම්
+        name: cells[1]?.v || '',
+        price: parseInt(cells[2]?.v || 0, 10),
+        category: cells[3]?.v || '',
+        image: cells[4]?.v || ''
+      };
+    }).filter(p => p !== null && p.name); // empty rows filter කරන්න
+
     renderProducts();
+  } catch (error) {
+    console.error("Google Sheet load වෙන්නේ නැහැ:", error);
+    // fallback: empty array හෝ message show කරන්න
+    document.getElementById("productGrid").innerHTML = "<p style='text-align:center; color:red;'>Products loading failed 😔 Please try later.</p>";
+  }
 }
-
-function saveProducts() {
-    localStorage.setItem("shewa_products", JSON.stringify(products));
-}
-
-// page ආරම්භ වෙනකොට call කරන්න
-loadProducts();
-
 
 
 /* ===========================
