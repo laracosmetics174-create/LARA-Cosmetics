@@ -4,11 +4,9 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>SHEWA Cosmetics Shop</title>
-
 <style>
   *{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,sans-serif;}
   body{background:linear-gradient(120deg,#0a0014,#120022,#1c0033);color:white;overflow-x:hidden;}
-
   header{
     position:sticky;top:0;z-index:999;
     padding:18px 6%;
@@ -17,17 +15,14 @@
     display:flex;justify-content:space-between;align-items:center;
     border-bottom:1px solid rgba(255,255,255,0.1);
   }
-
   .logo{
     font-size:1.8rem;font-weight:800;
     background:linear-gradient(90deg,#ff4fd8,#ffae00,#ff4fd8);
     -webkit-background-clip:text;background-clip:text;color:transparent;
   }
-
   nav{display:flex;align-items:center;gap:20px;}
   nav a{text-decoration:none;color:#ffd6f4;font-weight:500;transition:.3s;}
   nav a:hover{color:#ff4fd8;}
-
   .cart-btn{
     background:#ff4fd8;border:none;
     padding:10px 18px;border-radius:30px;
@@ -35,7 +30,6 @@
     transition:.3s;
   }
   .cart-btn:hover{transform:scale(1.05);box-shadow:0 0 18px rgba(255,79,216,0.6);}
-
   .hero{padding:70px 6%;text-align:center;}
   .hero h1{
     font-size:clamp(2.8rem,8vw,5rem);
@@ -44,7 +38,6 @@
     -webkit-background-clip:text;background-clip:text;color:transparent;
   }
   .hero p{margin-top:15px;font-size:1.2rem;opacity:.85;}
-
   .search-box{
     margin:40px auto 0;max-width:650px;
     display:flex;gap:10px;justify-content:center;align-items:center;
@@ -54,12 +47,9 @@
     font-size:1rem;width:100%;
   }
   .search-box select{width:220px;cursor:pointer;}
-
   .products{padding:40px 6% 80px;}
   .products h2{text-align:center;font-size:2.5rem;margin-bottom:30px;color:#ffae00;}
-
   .product-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:25px;}
-
   .card{
     background:rgba(255,255,255,0.06);
     border:1px solid rgba(255,255,255,0.1);
@@ -77,7 +67,6 @@
   .card h3{margin-top:12px;font-size:1.2rem;color:#ffd6f4;}
   .card p{margin-top:6px;font-size:1rem;opacity:.9;}
   .price{margin-top:10px;font-size:1.2rem;font-weight:800;color:#ffae00;}
-
   .btn{
     margin-top:14px;width:100%;
     padding:12px;border:none;border-radius:12px;
@@ -86,7 +75,6 @@
     color:black;transition:.3s;
   }
   .btn:hover{transform:scale(1.03);box-shadow:0 0 18px rgba(255,174,0,0.4);}
-
   /* CART */
   .cart-sidebar{
     position:fixed;top:0;right:-450px;width:400px;height:100%;
@@ -99,11 +87,9 @@
     overflow-y:auto;
   }
   .cart-sidebar.active{right:0;}
-
   .cart-header{display:flex;justify-content:space-between;align-items:center;}
   .cart-header h2{font-size:1.6rem;color:#ffae00;}
   .close-btn{cursor:pointer;font-size:1.8rem;font-weight:800;color:#ff4fd8;}
-
   .cart-items{margin-top:20px;}
   .cart-item{
     background:rgba(255,255,255,0.06);
@@ -112,9 +98,7 @@
   }
   .cart-item h4{font-size:1rem;color:#ffd6f4;}
   .cart-item p{font-size:.95rem;opacity:.85;margin-top:5px;}
-
   .cart-controls{margin-top:10px;display:flex;justify-content:space-between;align-items:center;gap:5px;}
-
   .qty-btn{
     background:#ff4fd8;border:none;padding:6px 10px;border-radius:8px;
     cursor:pointer;font-weight:800;color:black;
@@ -123,14 +107,12 @@
     background:#ffae00;border:none;padding:6px 10px;border-radius:8px;
     cursor:pointer;font-weight:800;color:black;
   }
-
   .total-box{
     margin-top:20px;padding:15px;border-radius:12px;
     background:rgba(255,255,255,0.06);
     border:1px solid rgba(255,255,255,0.1);
   }
   .total-box h3{font-size:1.3rem;color:#ffae00;}
-
   /* CHECKOUT */
   .checkout{
     margin-top:20px;padding:15px;border-radius:12px;
@@ -142,7 +124,6 @@
     width:100%;padding:10px;margin-top:10px;border-radius:10px;border:none;outline:none;
   }
   .checkout textarea{height:80px;resize:none;}
-
   .order-btn{
     margin-top:15px;width:100%;
     padding:12px;border:none;border-radius:12px;
@@ -151,13 +132,10 @@
     color:black;
   }
   .order-btn:hover{box-shadow:0 0 20px rgba(255,79,216,0.4);transform:scale(1.02);}
-
   footer{padding:25px;text-align:center;opacity:.6;font-size:.95rem;}
 </style>
 </head>
-
 <body>
-
 <header>
   <div class="logo">SHEWA Cosmetics</div>
   <nav>
@@ -166,11 +144,9 @@
     <button class="cart-btn" onclick="toggleCart()">🛒 Cart (<span id="cartCount">0</span>)</button>
   </nav>
 </header>
-
 <section class="hero">
   <h1>Beauty That Shines ✨</h1>
   <p>Cosmetics Collection | Lipsticks | Skincare | Perfumes | Makeup Kits</p>
-
   <div class="search-box">
     <input type="text" id="searchInput" placeholder="Search products..." onkeyup="renderProducts()">
     <select id="categoryFilter" onchange="renderProducts()">
@@ -182,12 +158,10 @@
     </select>
   </div>
 </section>
-
 <section class="products" id="products">
   <h2>Our Products 💄</h2>
   <div class="product-grid" id="productGrid"></div>
 </section>
-
 <section class="hero" id="about">
   <h1 style="font-size:2.5rem;">About Us</h1>
   <p style="max-width:850px;margin:15px auto;line-height:1.8;">
@@ -195,24 +169,19 @@
     Place your order now and it will be sent directly to our email.
   </p>
 </section>
-
 <footer>
   © 2026 SHEWA Cosmetics. All Rights Reserved.
 </footer>
-
 <!-- CART SIDEBAR -->
 <div class="cart-sidebar" id="cartSidebar">
   <div class="cart-header">
     <h2>Your Cart 🛍️</h2>
     <span class="close-btn" onclick="toggleCart()">✖</span>
   </div>
-
   <div class="cart-items" id="cartItems"></div>
-
   <div class="total-box">
     <h3>Total: Rs. <span id="cartTotal">0</span></h3>
   </div>
-
   <div class="checkout">
     <h3>Checkout Details</h3>
     <input type="text" id="customerName" placeholder="Your Name">
@@ -222,64 +191,60 @@
     <button class="order-btn" onclick="placeOrder()">📩 Place Order</button>
   </div>
 </div>
-
-
 <!-- EMAILJS SCRIPT -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-
 <script>
 /* =============================
-   EMAILJS CONFIG (CHANGE HERE)
+   EMAILJS CONFIG (CHANGE HERE IF NEEDED)
 ============================= */
-emailjs.init("U2idDXII4VQnvsnAd"); // <-- Paste your EmailJS Public Key here
-
+emailjs.init("U2idDXII4VQnvsnAd"); // Your Public Key
 
 /* ===========================
-   PRODUCT DATA (EDIT HERE)
+   PRODUCT DATA FROM GOOGLE SHEET
 =========================== */
 let products = [];
 
 async function loadProducts() {
   try {
-    const sheetId = '1wnuRfxmPo1yBYt_GevpKE8urzBtKqelZ2vFyOzC1xUw/edit?usp=sharing';  // ← මෙතන ඔයාගේ SHEET_ID paste කරන්න
-    const gid = '0';  // default sheet එක නම් 0, වෙන sheet එකක් නම් gid එක බලන්න
+    const sheetId = '1wnuRfxmPo1yBYt_GevpKE8urzBtKqelZ2vFyOzC1xUw';
+    const gid = '0'; // default first sheet
 
     const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=${gid}`;
 
     const response = await fetch(url);
+    if (!response.ok) throw new Error('Network response was not ok');
+
     const text = await response.text();
 
-    // Google weird prefix/suffix එක remove කරන්න
+    // Clean Google response format
     const jsonString = text
       .replace(/^google\.visualization\.Query\.setResponse\(/, '')
       .replace(/\);$/, '');
 
     const data = JSON.parse(jsonString);
 
-    // Rows ටික ගන්න (header row skip කරලා)
-    products = data.table.rows.map((row, index) => {
-      if (index === 0) return null; // header skip (optional, ඔයාට ඕන නම්)
+    // Convert rows to objects (skip header row - index 0)
+    products = data.table.rows.slice(1).map(row => {
       const cells = row.c || [];
       return {
-        id: index + 1,  // auto id දෙන්න ඕන නම්
+        id: parseInt(cells[0]?.v || Date.now() + Math.random()), // fallback id if missing
         name: cells[1]?.v || '',
         price: parseInt(cells[2]?.v || 0, 10),
         category: cells[3]?.v || '',
         image: cells[4]?.v || ''
       };
-    }).filter(p => p !== null && p.name); // empty rows filter කරන්න
+    }).filter(p => p.name.trim() !== ''); // remove empty/invalid rows
 
     renderProducts();
   } catch (error) {
-    console.error("Google Sheet load වෙන්නේ නැහැ:", error);
-    // fallback: empty array හෝ message show කරන්න
-    document.getElementById("productGrid").innerHTML = "<p style='text-align:center; color:red;'>Products loading failed 😔 Please try later.</p>";
+    console.error("Google Sheet loading error:", error);
+    document.getElementById("productGrid").innerHTML = 
+      '<p style="text-align:center;opacity:0.7;font-size:1.2rem;color:#ff6b6b;">Products loading failed 😔<br>Please check Sheet access or internet.</p>';
   }
 }
 
-
 /* ===========================
-   CART SYSTEM
+   CART SYSTEM (unchanged - using localStorage for cart)
 =========================== */
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
@@ -294,13 +259,11 @@ function toggleCart(){
 
 function addToCart(productId){
   const item = cart.find(p => p.id === productId);
-
   if(item){
     item.qty += 1;
   } else {
     cart.push({ id: productId, qty: 1 });
   }
-
   saveCart();
   renderCart();
   updateCartCount();
@@ -316,13 +279,10 @@ function removeFromCart(productId){
 function changeQty(productId, amount){
   const item = cart.find(p => p.id === productId);
   if(!item) return;
-
   item.qty += amount;
-
   if(item.qty <= 0){
     removeFromCart(productId);
   }
-
   saveCart();
   renderCart();
   updateCartCount();
@@ -333,7 +293,6 @@ function updateCartCount(){
   document.getElementById("cartCount").innerText = totalQty;
 }
 
-
 /* ===========================
    RENDER PRODUCTS
 =========================== */
@@ -341,7 +300,6 @@ function renderProducts(){
   const grid = document.getElementById("productGrid");
   const search = document.getElementById("searchInput").value.toLowerCase();
   const category = document.getElementById("categoryFilter").value;
-
   grid.innerHTML = "";
 
   const filtered = products.filter(p => {
@@ -358,7 +316,7 @@ function renderProducts(){
   filtered.forEach(p => {
     grid.innerHTML += `
       <div class="card">
-        <img src="${p.image}" alt="${p.name}">
+        <img src="${p.image}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/250?text=No+Image';">
         <h3>${p.name}</h3>
         <p>Category: ${p.category}</p>
         <div class="price">Rs. ${p.price}</div>
@@ -368,14 +326,12 @@ function renderProducts(){
   });
 }
 
-
 /* ===========================
    RENDER CART
 =========================== */
 function renderCart(){
   const cartItemsBox = document.getElementById("cartItems");
   const cartTotalBox = document.getElementById("cartTotal");
-
   cartItemsBox.innerHTML = "";
 
   if(cart.length === 0){
@@ -385,17 +341,15 @@ function renderCart(){
   }
 
   let total = 0;
-
   cart.forEach(item => {
     const product = products.find(p => p.id === item.id);
+    if(!product) return; // skip if product deleted from sheet
     const subTotal = product.price * item.qty;
     total += subTotal;
-
     cartItemsBox.innerHTML += `
       <div class="cart-item">
         <h4>${product.name}</h4>
         <p>Rs. ${product.price} × ${item.qty} = <b>Rs. ${subTotal}</b></p>
-
         <div class="cart-controls">
           <button class="qty-btn" onclick="changeQty(${item.id}, -1)">➖</button>
           <button class="qty-btn" onclick="changeQty(${item.id}, 1)">➕</button>
@@ -404,40 +358,34 @@ function renderCart(){
       </div>
     `;
   });
-
   cartTotalBox.innerText = total;
 }
 
-
 /* ===========================
-   PLACE ORDER (EMAILJS AUTO SEND)
+   PLACE ORDER (EMAILJS AUTO SEND) - unchanged
 =========================== */
 function placeOrder(){
   if(cart.length === 0){
     alert("Your cart is empty!");
     return;
   }
-
   const name = document.getElementById("customerName").value.trim();
   const phone = document.getElementById("customerPhone").value.trim();
   const email = document.getElementById("customerEmail").value.trim();
   const address = document.getElementById("customerAddress").value.trim();
-
   if(!name || !phone || !address){
     alert("Please fill Name, Phone, and Address!");
     return;
   }
-
   let orderText = "";
   let total = 0;
-
   cart.forEach(item => {
     const product = products.find(p => p.id === item.id);
+    if(!product) return;
     const sub = product.price * item.qty;
     total += sub;
     orderText += `• ${product.name} (Rs.${product.price}) x ${item.qty} = Rs.${sub}\n`;
   });
-
   const templateParams = {
     customer_name: name,
     customer_phone: phone,
@@ -447,17 +395,13 @@ function placeOrder(){
     total_price: total
   };
 
-
-emailjs.send("service_xp4fupn", "template_5bmkmls", templateParams)
-
+  emailjs.send("service_xp4fupn", "template_5bmkmls", templateParams)
     .then(() => {
       alert("✅ Order sent successfully to SHEWA Cosmetics!");
-
       cart = [];
       localStorage.removeItem("cart");
       renderCart();
       updateCartCount();
-
       document.getElementById("customerName").value = "";
       document.getElementById("customerPhone").value = "";
       document.getElementById("customerEmail").value = "";
@@ -469,12 +413,10 @@ emailjs.send("service_xp4fupn", "template_5bmkmls", templateParams)
     });
 }
 
-
 /* INIT */
-renderProducts();
+loadProducts();       // Google Sheet වලින් load කරන්න
 renderCart();
 updateCartCount();
 </script>
-
 </body>
 </html>
