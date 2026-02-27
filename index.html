@@ -4,7 +4,6 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>SHEWA Cosmetics Shop</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <style>
   *{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,sans-serif;}
   body{background:linear-gradient(120deg,#0a0014,#120022,#1c0033);color:white;overflow-x:hidden;}
@@ -173,6 +172,7 @@
 <footer>
   © 2026 SHEWA Cosmetics. All Rights Reserved.
 </footer>
+
 <!-- CART SIDEBAR -->
 <div class="cart-sidebar" id="cartSidebar">
   <div class="cart-header">
@@ -192,87 +192,114 @@
     <button class="order-btn" onclick="placeOrder()">📩 Place Order</button>
   </div>
 </div>
+
 <!-- EMAILJS SCRIPT -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <script>
-/* EMAILJS */
+/* =============================
+   EMAILJS CONFIG
+============================= */
 emailjs.init("U2idDXII4VQnvsnAd");
 
-/* PRODUCTS FROM GOOGLE SHEET CSV */
+/* ===========================
+   PRODUCTS FROM products.json FILE
+=========================== */
 let products = [];
 
-function loadProducts(attempt = 1) {
-  const sheetId = '1wnuRfxmPo1yBYt_GevpKE8urzBtKqelZ2vFyOzC1xUw';
-  const csvUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/pub?output=csv`;
-
-  Papa.parse(csvUrl, {
-    download: true,
-    header: true,
-    skipEmptyLines: true,
-    complete: function(results) {
-      console.log("CSV loaded successfully:", results.data); // debug: check what data comes
-      products = results.data
-        .map(row => ({
-          id: parseInt(row.id || Date.now() + Math.random(), 10),
-          name: (row.name || '').trim(),
-          price: parseInt(row.price || 0, 10),
-          category: (row.category || '').trim(),
-          image: row.image || ''
-        }))
-        .filter(p => p.name !== '');
-      
-      if (products.length === 0) {
-        document.getElementById("productGrid").innerHTML = '<p style="text-align:center;opacity:0.7;font-size:1.2rem;">No products in sheet yet 😢<br>Add rows and refresh.</p>';
-      }
-      renderProducts();
-    },
-    error: function(error) {
-      console.error("CSV load attempt " + attempt + " failed:", error);
-      if (attempt < 3) {
-        setTimeout(() => loadProducts(attempt + 1), 2000); // retry after 2s
-      } else {
-        document.getElementById("productGrid").innerHTML = 
-          '<p style="text-align:center;opacity:0.7;font-size:1.2rem;color:#ff6b6b;">Products loading failed 😔<br>1. Make sure sheet is published ("Anyone with the link" Viewer)<br>2. Check console (F12) for exact error<br>3. Test CSV URL in browser</p>';
-      }
+async function loadProducts() {
+  try {
+    const response = await fetch('products.json');
+    
+    if (!response.ok) {
+      throw new Error(`products.json file ගන්න බැරි උනා (status: ${response.status})`);
     }
-  });
+    
+    products = await response.json();
+    
+    // id නැත්නම් auto assign කරන්න
+    products = products.map((p, index) => ({
+      ...p,
+      id: p.id || (index + 1)
+    }));
+    
+    renderProducts();
+  } catch (error) {
+    console.error("Products load error:", error);
+    document.getElementById("productGrid").innerHTML = 
+      '<p style="text-align:center;opacity:0.7;font-size:1.2rem;color:#ff6b6b;">Products loading failed 😔<br>products.json file එක GitHub repo එකේ තියෙනවද බලන්න.</p>';
+  }
 }
 
-/* CART & other functions remain the same as your previous code */
+/* ===========================
+   CART SYSTEM
+=========================== */
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
-function saveCart(){ localStorage.setItem("cart", JSON.stringify(cart)); }
-function toggleCart(){ document.getElementById("cartSidebar").classList.toggle("active"); renderCart(); }
+
+function saveCart(){
+  localStorage.setItem("cart", JSON.stringify(cart));
+}
+
+function toggleCart(){
+  document.getElementById("cartSidebar").classList.toggle("active");
+  renderCart();
+}
+
 function addToCart(productId){
   const item = cart.find(p => p.id === productId);
-  if(item){ item.qty += 1; } else { cart.push({ id: productId, qty: 1 }); }
-  saveCart(); renderCart(); updateCartCount();
+  if(item){
+    item.qty += 1;
+  } else {
+    cart.push({ id: productId, qty: 1 });
+  }
+  saveCart();
+  renderCart();
+  updateCartCount();
 }
-function removeFromCart(productId){ cart = cart.filter(p => p.id !== productId); saveCart(); renderCart(); updateCartCount(); }
+
+function removeFromCart(productId){
+  cart = cart.filter(p => p.id !== productId);
+  saveCart();
+  renderCart();
+  updateCartCount();
+}
+
 function changeQty(productId, amount){
   const item = cart.find(p => p.id === productId);
   if(!item) return;
   item.qty += amount;
-  if(item.qty <= 0){ removeFromCart(productId); }
-  saveCart(); renderCart(); updateCartCount();
+  if(item.qty <= 0){
+    removeFromCart(productId);
+  }
+  saveCart();
+  renderCart();
+  updateCartCount();
 }
+
 function updateCartCount(){
   const totalQty = cart.reduce((sum,item)=>sum+item.qty,0);
   document.getElementById("cartCount").innerText = totalQty;
 }
+
+/* ===========================
+   RENDER PRODUCTS
+=========================== */
 function renderProducts(){
   const grid = document.getElementById("productGrid");
   const search = document.getElementById("searchInput").value.toLowerCase();
   const category = document.getElementById("categoryFilter").value;
   grid.innerHTML = "";
+
   const filtered = products.filter(p => {
     const matchSearch = p.name.toLowerCase().includes(search);
     const matchCategory = category === "all" ? true : p.category === category;
     return matchSearch && matchCategory;
   });
+
   if(filtered.length === 0){
     grid.innerHTML = "<p style='text-align:center;opacity:0.7;font-size:1.2rem;'>No products found 😢</p>";
     return;
   }
+
   filtered.forEach(p => {
     grid.innerHTML += `
       <div class="card">
@@ -285,6 +312,10 @@ function renderProducts(){
     `;
   });
 }
+
+/* ===========================
+   RENDER CART
+=========================== */
 function renderCart(){
   const cartItemsBox = document.getElementById("cartItems");
   const cartTotalBox = document.getElementById("cartTotal");
@@ -294,6 +325,7 @@ function renderCart(){
     cartTotalBox.innerText = "0";
     return;
   }
+
   let total = 0;
   cart.forEach(item => {
     const product = products.find(p => p.id === item.id);
@@ -314,13 +346,23 @@ function renderCart(){
   });
   cartTotalBox.innerText = total;
 }
+
+/* ===========================
+   PLACE ORDER (EMAILJS)
+=========================== */
 function placeOrder(){
-  if(cart.length === 0){ alert("Your cart is empty!"); return; }
+  if(cart.length === 0){
+    alert("Your cart is empty!");
+    return;
+  }
   const name = document.getElementById("customerName").value.trim();
   const phone = document.getElementById("customerPhone").value.trim();
   const email = document.getElementById("customerEmail").value.trim();
   const address = document.getElementById("customerAddress").value.trim();
-  if(!name || !phone || !address){ alert("Please fill Name, Phone, and Address!"); return; }
+  if(!name || !phone || !address){
+    alert("Please fill Name, Phone, and Address!");
+    return;
+  }
   let orderText = "";
   let total = 0;
   cart.forEach(item => {
@@ -338,11 +380,14 @@ function placeOrder(){
     order_items: orderText,
     total_price: total
   };
+
   emailjs.send("service_xp4fupn", "template_5bmkmls", templateParams)
     .then(() => {
       alert("✅ Order sent successfully to SHEWA Cosmetics!");
-      cart = []; localStorage.removeItem("cart");
-      renderCart(); updateCartCount();
+      cart = [];
+      localStorage.removeItem("cart");
+      renderCart();
+      updateCartCount();
       document.getElementById("customerName").value = "";
       document.getElementById("customerPhone").value = "";
       document.getElementById("customerEmail").value = "";
