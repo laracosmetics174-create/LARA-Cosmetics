@@ -210,7 +210,7 @@ let products = [
     name: "Matte Lipstick - Red",
     price: 2500,
     category: "Makeup",
-    image: "https://via.placeholder.com/250x220/ff69b4/000000?text=Matte+Lipstick+Red"
+    image: "https://via.placeholder.com/250x220/ff1493/ffffff?text=Matte+Lipstick+Red"
   },
   {
     id: 2,
@@ -224,7 +224,7 @@ let products = [
     name: "Rose Perfume 100ml",
     price: 3500,
     category: "Perfume",
-    image: "https://via.placeholder.com/250x220/ff1493/000000?text=Rose+Perfume"
+    image: "https://via.placeholder.com/250x220/ff69b4/ffffff?text=Rose+Perfume"
   },
   {
     id: 4,
@@ -233,13 +233,12 @@ let products = [
     category: "Accessories",
     image: "https://via.placeholder.com/250x220/8b4513/ffffff?text=Brush+Set"
   }
-  // ඔයාට තව products ඕන නම් මෙතනට එකතු කරන්න
 ];
 
 /* ===========================
    CART SYSTEM
 =========================== */
-let cart = JSON.parse(localStorage.getItem("cart")) || [];
+let cart = [];
 
 function saveCart(){
   localStorage.setItem("cart", JSON.stringify(cart));
@@ -354,7 +353,7 @@ function renderCart(){
 }
 
 /* ===========================
-   PLACE ORDER (EMAILJS)
+   PLACE ORDER
 =========================== */
 function placeOrder(){
   if(cart.length === 0){
@@ -405,7 +404,7 @@ function placeOrder(){
     });
 }
 
-/* INIT - products ටික render කරන්න */
+/* INIT */
 renderProducts();
 renderCart();
 updateCartCount();
