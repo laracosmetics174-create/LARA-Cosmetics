@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
- <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>SHEWA Cosmetics Shop</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <style>
   *{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,sans-serif;}
   body{background:linear-gradient(120deg,#0a0014,#120022,#1c0033);color:white;overflow-x:hidden;}
@@ -195,114 +195,84 @@
 <!-- EMAILJS SCRIPT -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <script>
-/* =============================
-   EMAILJS CONFIG (CHANGE HERE IF NEEDED)
-============================= */
-emailjs.init("U2idDXII4VQnvsnAd"); // Your Public Key
+/* EMAILJS */
+emailjs.init("U2idDXII4VQnvsnAd");
 
-/* ===========================
-   PRODUCT DATA FROM GOOGLE SHEET
-=========================== */
+/* PRODUCTS FROM GOOGLE SHEET CSV */
 let products = [];
 
-function loadProducts() {
-  const sheetId = '1wnuRfxmPo1yBYt_GevpKE8urzBtKqelZ2vFyOzC1xUw'; // ඔයාගේ original ID
-  // Published CSV URL (pub?output=csv works better than gviz in many cases)
+function loadProducts(attempt = 1) {
+  const sheetId = '1wnuRfxmPo1yBYt_GevpKE8urzBtKqelZ2vFyOzC1xUw';
   const csvUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/pub?output=csv`;
 
   Papa.parse(csvUrl, {
     download: true,
-    header: true,          // first row = headers
+    header: true,
     skipEmptyLines: true,
     complete: function(results) {
-      products = results.data.map(row => ({
-        id: parseInt(row.id || Date.now() + Math.random(), 10),
-        name: row.name || '',
-        price: parseInt(row.price || 0, 10),
-        category: row.category || '',
-        image: row.image || ''
-      })).filter(p => p.name.trim() !== ''); // empty rows remove
-
+      console.log("CSV loaded successfully:", results.data); // debug: check what data comes
+      products = results.data
+        .map(row => ({
+          id: parseInt(row.id || Date.now() + Math.random(), 10),
+          name: (row.name || '').trim(),
+          price: parseInt(row.price || 0, 10),
+          category: (row.category || '').trim(),
+          image: row.image || ''
+        }))
+        .filter(p => p.name !== '');
+      
+      if (products.length === 0) {
+        document.getElementById("productGrid").innerHTML = '<p style="text-align:center;opacity:0.7;font-size:1.2rem;">No products in sheet yet 😢<br>Add rows and refresh.</p>';
+      }
       renderProducts();
     },
     error: function(error) {
-      console.error("CSV load error:", error);
-      document.getElementById("productGrid").innerHTML = 
-        '<p style="text-align:center;opacity:0.7;font-size:1.2rem;color:#ff6b6b;">Products loading failed 😔<br>Check Sheet publish settings or internet.</p>';
+      console.error("CSV load attempt " + attempt + " failed:", error);
+      if (attempt < 3) {
+        setTimeout(() => loadProducts(attempt + 1), 2000); // retry after 2s
+      } else {
+        document.getElementById("productGrid").innerHTML = 
+          '<p style="text-align:center;opacity:0.7;font-size:1.2rem;color:#ff6b6b;">Products loading failed 😔<br>1. Make sure sheet is published ("Anyone with the link" Viewer)<br>2. Check console (F12) for exact error<br>3. Test CSV URL in browser</p>';
+      }
     }
   });
 }
 
-/* ===========================
-   CART SYSTEM (unchanged - using localStorage for cart)
-=========================== */
+/* CART & other functions remain the same as your previous code */
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-function saveCart(){
-  localStorage.setItem("cart", JSON.stringify(cart));
-}
-
-function toggleCart(){
-  document.getElementById("cartSidebar").classList.toggle("active");
-  renderCart();
-}
-
+function saveCart(){ localStorage.setItem("cart", JSON.stringify(cart)); }
+function toggleCart(){ document.getElementById("cartSidebar").classList.toggle("active"); renderCart(); }
 function addToCart(productId){
   const item = cart.find(p => p.id === productId);
-  if(item){
-    item.qty += 1;
-  } else {
-    cart.push({ id: productId, qty: 1 });
-  }
-  saveCart();
-  renderCart();
-  updateCartCount();
+  if(item){ item.qty += 1; } else { cart.push({ id: productId, qty: 1 }); }
+  saveCart(); renderCart(); updateCartCount();
 }
-
-function removeFromCart(productId){
-  cart = cart.filter(p => p.id !== productId);
-  saveCart();
-  renderCart();
-  updateCartCount();
-}
-
+function removeFromCart(productId){ cart = cart.filter(p => p.id !== productId); saveCart(); renderCart(); updateCartCount(); }
 function changeQty(productId, amount){
   const item = cart.find(p => p.id === productId);
   if(!item) return;
   item.qty += amount;
-  if(item.qty <= 0){
-    removeFromCart(productId);
-  }
-  saveCart();
-  renderCart();
-  updateCartCount();
+  if(item.qty <= 0){ removeFromCart(productId); }
+  saveCart(); renderCart(); updateCartCount();
 }
-
 function updateCartCount(){
   const totalQty = cart.reduce((sum,item)=>sum+item.qty,0);
   document.getElementById("cartCount").innerText = totalQty;
 }
-
-/* ===========================
-   RENDER PRODUCTS
-=========================== */
 function renderProducts(){
   const grid = document.getElementById("productGrid");
   const search = document.getElementById("searchInput").value.toLowerCase();
   const category = document.getElementById("categoryFilter").value;
   grid.innerHTML = "";
-
   const filtered = products.filter(p => {
     const matchSearch = p.name.toLowerCase().includes(search);
     const matchCategory = category === "all" ? true : p.category === category;
     return matchSearch && matchCategory;
   });
-
   if(filtered.length === 0){
     grid.innerHTML = "<p style='text-align:center;opacity:0.7;font-size:1.2rem;'>No products found 😢</p>";
     return;
   }
-
   filtered.forEach(p => {
     grid.innerHTML += `
       <div class="card">
@@ -315,25 +285,19 @@ function renderProducts(){
     `;
   });
 }
-
-/* ===========================
-   RENDER CART
-=========================== */
 function renderCart(){
   const cartItemsBox = document.getElementById("cartItems");
   const cartTotalBox = document.getElementById("cartTotal");
   cartItemsBox.innerHTML = "";
-
   if(cart.length === 0){
     cartItemsBox.innerHTML = "<p style='opacity:0.7;text-align:center;margin-top:20px;'>Cart is empty 🛒</p>";
     cartTotalBox.innerText = "0";
     return;
   }
-
   let total = 0;
   cart.forEach(item => {
     const product = products.find(p => p.id === item.id);
-    if(!product) return; // skip if product deleted from sheet
+    if(!product) return;
     const subTotal = product.price * item.qty;
     total += subTotal;
     cartItemsBox.innerHTML += `
@@ -350,23 +314,13 @@ function renderCart(){
   });
   cartTotalBox.innerText = total;
 }
-
-/* ===========================
-   PLACE ORDER (EMAILJS AUTO SEND) - unchanged
-=========================== */
 function placeOrder(){
-  if(cart.length === 0){
-    alert("Your cart is empty!");
-    return;
-  }
+  if(cart.length === 0){ alert("Your cart is empty!"); return; }
   const name = document.getElementById("customerName").value.trim();
   const phone = document.getElementById("customerPhone").value.trim();
   const email = document.getElementById("customerEmail").value.trim();
   const address = document.getElementById("customerAddress").value.trim();
-  if(!name || !phone || !address){
-    alert("Please fill Name, Phone, and Address!");
-    return;
-  }
+  if(!name || !phone || !address){ alert("Please fill Name, Phone, and Address!"); return; }
   let orderText = "";
   let total = 0;
   cart.forEach(item => {
@@ -384,14 +338,11 @@ function placeOrder(){
     order_items: orderText,
     total_price: total
   };
-
   emailjs.send("service_xp4fupn", "template_5bmkmls", templateParams)
     .then(() => {
       alert("✅ Order sent successfully to SHEWA Cosmetics!");
-      cart = [];
-      localStorage.removeItem("cart");
-      renderCart();
-      updateCartCount();
+      cart = []; localStorage.removeItem("cart");
+      renderCart(); updateCartCount();
       document.getElementById("customerName").value = "";
       document.getElementById("customerPhone").value = "";
       document.getElementById("customerEmail").value = "";
@@ -404,7 +355,7 @@ function placeOrder(){
 }
 
 /* INIT */
-loadProducts();       // Google Sheet වලින් load කරන්න
+loadProducts();
 renderCart();
 updateCartCount();
 </script>
