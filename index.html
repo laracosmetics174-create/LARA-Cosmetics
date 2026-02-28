@@ -206,21 +206,17 @@ emailjs.init("U2idDXII4VQnvsnAd");
 =========================== */
 let products = [];
 
-fetch('https://docs.google.com/spreadsheets/d/1wnuRfxmPo1yBYt_GevpKE8urzBtKqelZ2vFyOzC1xUw/edit?usp=sharing')  // YOUR_SHEET_ID replace කරන්න
-  .then(response => response.text())
-  .then(csvText => {
-    const rows = csvText.split('\n').map(row => row.split(','));
-    // rows[0] = headers (id,name,price,category,image)
-    products = rows.slice(1).map(row => ({
-      id: parseInt(row[0]),
-      name: row[1].trim(),
-      price: parseInt(row[2]),
-      category: row[3].trim(),
-      image: row[4].trim()
-    }));
-    renderProducts();  // ඔයාගේ function එක call කරන්න
+fetch('YOUR_WEB_APP_URL_HERE')  // ඔයාගේ Apps Script URL එක මෙතන paste කරන්න
+  .then(response => response.json())
+  .then(data => {
+    products = data;
+    renderProducts();  // ඔයාගේ function එක call වෙනවා
+    console.log('Products loaded from Sheet!');
   })
-  .catch(error => console.error('Error loading products:', error));
+  .catch(error => {
+    console.error('Error:', error);
+    document.getElementById('productGrid').innerHTML = '<p style="text-align:center; color:#ffae00; font-size:1.2rem;">Products load කරන්න බැරි වුණා 😢 Refresh කරලා බලන්න</p>';
+  });
 
 /* ===========================
    CART SYSTEM
