@@ -439,7 +439,7 @@ function renderProducts() {
     return matchSearch && matchCategory;
   });
   if (filtered.length === 0) {
-    grid.innerHTML = "<p style='text-align:center;opacity:0.7;font-size:1.2rem;color:#555;'>No products found 😢</p>";
+    grid.innerHTML = "<p style='text-align:center;opacity:0.7;font-size:1.2rem;color:#555;'>Loading products</p>";
     return;
   }
   filtered.forEach(p => {
