@@ -343,16 +343,20 @@ function placeOrder(){
     alert("Your cart is empty!");
     return;
   }
+
   const name = document.getElementById("customerName").value.trim();
   const phone = document.getElementById("customerPhone").value.trim();
   const email = document.getElementById("customerEmail").value.trim();
   const address = document.getElementById("customerAddress").value.trim();
+
   if(!name || !phone || !address){
     alert("Please fill Name, Phone, and Address!");
     return;
   }
+
   let orderText = "";
   let total = 0;
+
   cart.forEach(item => {
     const product = products.find(p => p.id === item.id);
     if(!product) return;
@@ -360,6 +364,7 @@ function placeOrder(){
     total += sub;
     orderText += `• ${product.name} (Rs.${product.price}) x ${item.qty} = Rs.${sub}\n`;
   });
+
   const templateParams = {
     customer_name: name,
     customer_phone: phone,
@@ -368,6 +373,50 @@ function placeOrder(){
     order_items: orderText,
     total_price: total
   };
+
+  // 👉 BUTTON LOADING STATE
+  const orderBtn = document.querySelector(".order-btn");
+  orderBtn.innerText = "⏳ Please wait...";
+  orderBtn.disabled = true;
+
+  // 👉 SEND EMAIL
+  emailjs.send("service_jole3ot", "template_n8pbmd8", templateParams)
+    .then(() => {
+
+      // SUCCESS MESSAGE
+      orderBtn.innerText = "✅ Order Confirmed!";
+      alert("✅ Your order has been sent successfully!");
+
+      // CLEAR CART
+      cart = [];
+      localStorage.removeItem("cart");
+      renderCart();
+      updateCartCount();
+
+      // CLEAR FORM
+      document.getElementById("customerName").value = "";
+      document.getElementById("customerPhone").value = "";
+      document.getElementById("customerEmail").value = "";
+      document.getElementById("customerAddress").value = "";
+
+      // RESET BUTTON AFTER 2s
+      setTimeout(()=>{
+        orderBtn.innerText = "📩 Place Order";
+        orderBtn.disabled = false;
+      },2000);
+
+    })
+    .catch((error) => {
+
+      // FAIL MESSAGE
+      orderBtn.innerText = "❌ Failed. Try again";
+      orderBtn.disabled = false;
+
+      alert("❌ Order send failed! Check EmailJS setup.");
+      console.log("EmailJS Error:", error);
+
+    });
+}
 
   emailjs.send("service_jole3ot", "template_n8pbmd8", templateParams)
     .then(() => {
