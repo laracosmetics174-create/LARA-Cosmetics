@@ -6,7 +6,7 @@
 <title>LARA Cosmetics Shop</title>
 <style>
   *{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,sans-serif;}
-  body{background:linear-gradient(120deg,#0a0014,#120022,#1c0033);color:white;overflow-x:hidden;}
+  body{background:linear-gradient(135deg, #0f001a, #1a0033, #2a004d);color:white;overflow-x:hidden;}
   header{
     position:sticky;top:0;z-index:999;
     padding:18px 6%;
@@ -313,7 +313,7 @@ function renderProducts() {
   });
 
   if (filtered.length === 0) {
-    grid.innerHTML = "<p style='text-align:center;opacity:0.7;font-size:1.2rem;'>No products found 😢</p>";
+    grid.innerHTML = "<p style='text-align:center;opacity:0.7;font-size:1.2rem;'>Loading products</p>";
     return;
   }
 
