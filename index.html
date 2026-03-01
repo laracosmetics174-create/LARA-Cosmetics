@@ -1,48 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>LARA Cosmetics Shop</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,sans-serif;}
+body{background:linear-gradient(120deg,#0a0014,#120022,#1c0033);color:white;overflow-x:hidden;}
 
-body{
-background:linear-gradient(120deg,#0a0014,#120022,#1c0033);
-color:white;
-overflow-x:hidden;
-}
-
-/* HEADER */
 header{
-position:sticky;
-top:0;
+position:sticky;top:0;z-index:999;
 padding:18px 6%;
 background:rgba(0,0,0,0.6);
-display:flex;
-justify-content:space-between;
-align-items:center;
+backdrop-filter:blur(10px);
+display:flex;justify-content:space-between;align-items:center;
 border-bottom:1px solid rgba(255,255,255,0.1);
 }
 
 .logo{
-font-size:1.8rem;
-font-weight:800;
-background:linear-gradient(90deg,#ff4fd8,#ffae00);
+font-size:1.8rem;font-weight:800;
+background:linear-gradient(90deg,#ff4fd8,#ffae00,#ff4fd8);
 -webkit-background-clip:text;
 color:transparent;
 }
 
-nav{
-display:flex;
-gap:20px;
-align-items:center;
-}
+nav{display:flex;align-items:center;gap:20px;}
 
 nav a{
-color:#ffd6f4;
 text-decoration:none;
+color:#ffd6f4;
 }
 
 .cart-btn{
@@ -55,24 +42,23 @@ font-weight:700;
 color:black;
 }
 
-/* HERO */
 .hero{
-padding:60px 6%;
+padding:70px 6%;
 text-align:center;
 }
 
 .hero h1{
-font-size:3rem;
-background:linear-gradient(90deg,#fff,#ff4fd8,#ffae00);
+font-size:clamp(2.8rem,8vw,5rem);
+background:linear-gradient(90deg,#fff,#ff4fd8,#ffae00,#fff);
 -webkit-background-clip:text;
 color:transparent;
 }
 
 .search-box{
-margin-top:25px;
+margin:40px auto 0;
+max-width:650px;
 display:flex;
 gap:10px;
-justify-content:center;
 }
 
 .search-box input,
@@ -80,11 +66,11 @@ justify-content:center;
 padding:12px;
 border-radius:10px;
 border:none;
+width:100%;
 }
 
-/* PRODUCTS */
 .products{
-padding:40px 6%;
+padding:40px 6% 80px;
 }
 
 .product-grid{
@@ -95,49 +81,62 @@ gap:25px;
 
 .card{
 background:rgba(255,255,255,0.06);
-padding:15px;
-border-radius:15px;
+border:1px solid rgba(255,255,255,0.1);
+border-radius:18px;
+padding:18px;
+backdrop-filter:blur(12px);
 }
 
 .card img{
 width:100%;
-height:200px;
+height:220px;
 object-fit:cover;
-border-radius:10px;
+border-radius:15px;
 }
 
 .price{
+margin-top:10px;
+font-size:1.2rem;
+font-weight:800;
 color:#ffae00;
-font-weight:bold;
-margin-top:8px;
 }
 
 .btn{
-margin-top:10px;
+margin-top:14px;
 width:100%;
-padding:10px;
+padding:12px;
 border:none;
-border-radius:10px;
-background:linear-gradient(90deg,#ff4fd8,#ffae00);
-font-weight:bold;
+border-radius:12px;
 cursor:pointer;
+font-weight:700;
+background:linear-gradient(90deg,#ff4fd8,#ffae00);
+color:black;
 }
 
 /* CART */
+
 .cart-sidebar{
 position:fixed;
-right:-400px;
 top:0;
-width:350px;
+right:-450px;
+width:400px;
 height:100%;
-background:black;
+background:rgba(0,0,0,0.95);
 padding:20px;
 transition:.4s;
-overflow:auto;
+z-index:9999;
+overflow-y:auto;
 }
 
 .cart-sidebar.active{
 right:0;
+}
+
+.cart-item{
+background:rgba(255,255,255,0.06);
+padding:12px;
+border-radius:12px;
+margin-bottom:15px;
 }
 
 .order-btn{
@@ -145,34 +144,48 @@ margin-top:15px;
 width:100%;
 padding:12px;
 border:none;
-border-radius:10px;
-font-weight:bold;
-background:linear-gradient(90deg,#ffae00,#ff4fd8);
+border-radius:12px;
 cursor:pointer;
+font-size:1.05rem;
+font-weight:800;
+background:linear-gradient(90deg,#ffae00,#ff4fd8);
+color:black;
 }
 
-input,textarea{
+.checkout input,
+.checkout textarea{
 width:100%;
-margin-top:10px;
 padding:10px;
+margin-top:10px;
+border-radius:10px;
 border:none;
-border-radius:8px;
+}
+
+footer{
+padding:25px;
+text-align:center;
+opacity:.6;
 }
 </style>
 </head>
-
 <body>
 
+
 <header>
+
 <div class="logo">LARA Cosmetics</div>
 
 <nav>
-<a href="#">Shop</a>
+<a href="#products">Shop</a>
+
 <button class="cart-btn" onclick="toggleCart()">
 🛒 Cart (<span id="cartCount">0</span>)
 </button>
+
 </nav>
+
 </header>
+
 
 
 <section class="hero">
@@ -181,16 +194,12 @@ border-radius:8px;
 
 <div class="search-box">
 
-<input
-id="searchInput"
-placeholder="Search..."
-onkeyup="renderProducts()"
->
+<input id="searchInput"
+placeholder="Search products..."
+onkeyup="renderProducts()">
 
-<select
-id="categoryFilter"
-onchange="renderProducts()"
->
+<select id="categoryFilter"
+onchange="renderProducts()">
 
 <option value="all">All</option>
 <option value="Skincare">Skincare</option>
@@ -204,32 +213,33 @@ onchange="renderProducts()"
 </section>
 
 
-<section class="products">
 
-<div
-class="product-grid"
-id="productGrid"
-></div>
+<section class="products" id="products">
+
+<div class="product-grid" id="productGrid"></div>
 
 </section>
 
 
 
-<div
-class="cart-sidebar"
-id="cartSidebar"
->
+<footer>
+© LARA Cosmetics
+</footer>
 
-<h2>Your Cart</h2>
+
+
+<!-- CART -->
+
+<div class="cart-sidebar" id="cartSidebar">
+
+<h2>Your Cart 🛍️</h2>
 
 <div id="cartItems"></div>
 
-<h3>Total Rs.
-<span id="cartTotal">0</span>
-</h3>
+<h3>Total Rs. <span id="cartTotal">0</span></h3>
 
 
-<h3>Checkout</h3>
+<div class="checkout">
 
 <input id="customerName" placeholder="Name">
 
@@ -237,15 +247,18 @@ id="cartSidebar"
 
 <input id="customerEmail" placeholder="Email">
 
-<textarea id="customerAddress" placeholder="Address"></textarea>
+<textarea id="customerAddress"
+placeholder="Address"></textarea>
 
 
-<button
-class="order-btn"
-onclick="placeOrder()"
->
+<button class="order-btn"
+onclick="placeOrder()">
+
 📩 Place Order
+
 </button>
+
+</div>
 
 </div>
 
@@ -259,15 +272,24 @@ emailjs.init("W_o_RiuSlVn_zCxlp");
 
 
 /* PRODUCTS LOAD */
+
 let products=[];
 
 fetch("https://script.google.com/macros/s/AKfycby0FNsa6h84fanuT5xgOD__MH8L69-ORZSXnJJjk1qmvYZ_SSnrRNgLQUjVQujfh8WN/exec")
+
 .then(res=>res.json())
+
 .then(data=>{
 
 products=data;
 
 renderProducts();
+
+})
+
+.catch(()=>{
+
+productGrid.innerHTML="Failed loading";
 
 });
 
@@ -279,27 +301,21 @@ let cart=[];
 
 function toggleCart(){
 
-document
-.getElementById("cartSidebar")
-.classList.toggle("active");
+cartSidebar.classList.toggle("active");
 
 renderCart();
 
 }
 
 
+
 function addToCart(id){
 
 let item=cart.find(i=>i.id===id);
 
-if(item)
-item.qty++;
+if(item) item.qty++;
 
-else
-cart.push({
-id,
-qty:1
-});
+else cart.push({id,qty:1});
 
 renderCart();
 
@@ -308,19 +324,14 @@ updateCartCount();
 }
 
 
+
 function renderProducts(){
 
-let grid=document.getElementById("productGrid");
+let grid=productGrid;
 
-let search=
-document.getElementById("searchInput")
-.value
-.toLowerCase();
+let search=searchInput.value.toLowerCase();
 
-let cat=
-document.getElementById("categoryFilter")
-.value;
-
+let cat=categoryFilter.value;
 
 grid.innerHTML="";
 
@@ -330,7 +341,9 @@ products
 .filter(p=>
 
 p.name.toLowerCase().includes(search)
+
 &&
+
 (cat=="all"||p.category==cat)
 
 )
@@ -341,7 +354,8 @@ grid.innerHTML+=`
 
 <div class="card">
 
-<img src="${p.image}">
+<img src="${p.image}"
+onerror="this.src='https://via.placeholder.com/250'">
 
 <h3>${p.name}</h3>
 
@@ -349,10 +363,8 @@ grid.innerHTML+=`
 Rs.${p.price}
 </div>
 
-<button
-class="btn"
-onclick="addToCart(${p.id})"
->
+<button class="btn"
+onclick="addToCart(${p.id})">
 
 Add to Cart
 
@@ -370,44 +382,43 @@ Add to Cart
 
 function renderCart(){
 
-let box=
-document.getElementById("cartItems");
-
-box.innerHTML="";
-
+cartItems.innerHTML="";
 
 let total=0;
 
 
-cart.forEach(item=>{
+cart.forEach(i=>{
 
-let p=
-products.find(x=>x.id==item.id);
+let p=products.find(x=>x.id==i.id);
 
 if(!p)return;
 
-let sub=p.price*item.qty;
+let sub=p.price*i.qty;
 
 total+=sub;
 
-box.innerHTML+=`
+cartItems.innerHTML+=`
 
-<p>
+<div class="cart-item">
 
 ${p.name}
 
-x${item.qty}
+<br>
 
-= Rs.${sub}
+${i.qty} × ${p.price}
 
-</p>
+=
+
+${sub}
+
+</div>
 
 `;
 
 });
 
 
-document.getElementById("cartTotal").innerText=total;
+cartTotal.innerText=total;
 
 }
 
@@ -415,17 +426,16 @@ document.getElementById("cartTotal").innerText=total;
 
 function updateCartCount(){
 
-let qty=
-cart.reduce((a,b)=>a+b.qty,0);
+let qty=cart.reduce((a,b)=>a+b.qty,0);
 
-document.getElementById("cartCount")
-.innerText=qty;
+cartCount.innerText=qty;
 
 }
 
 
 
 /* PLACE ORDER */
+
 function placeOrder(){
 
 if(cart.length==0){
@@ -437,22 +447,18 @@ return;
 }
 
 
-let name=
-customerName.value.trim();
+let name=customerName.value.trim();
 
-let phone=
-customerPhone.value.trim();
+let phone=customerPhone.value.trim();
 
-let email=
-customerEmail.value.trim();
+let email=customerEmail.value.trim();
 
-let address=
-customerAddress.value.trim();
+let address=customerAddress.value.trim();
 
 
 if(!name||!phone||!address){
 
-alert("Fill details");
+alert("Fill all details");
 
 return;
 
@@ -466,8 +472,7 @@ let total=0;
 
 cart.forEach(i=>{
 
-let p=
-products.find(x=>x.id==i.id);
+let p=products.find(x=>x.id==i.id);
 
 let sub=p.price*i.qty;
 
@@ -484,7 +489,7 @@ customer_name:name,
 
 customer_phone:phone,
 
-customer_email:email,
+customer_email:email || "Not provided",
 
 customer_address:address,
 
@@ -497,19 +502,16 @@ total_price:total
 
 /* BUTTON LOADING */
 
-let btn=
-document.querySelector(".order-btn");
+let btn=document.querySelector(".order-btn");
 
 btn.innerText="⏳ Please wait...";
 
 btn.disabled=true;
 
 
-/* SEND */
+/* EMAIL SEND */
 
-emailjs
-
-.send(
+emailjs.send(
 "service_jole3ot",
 "template_n8pbmd8",
 params
@@ -517,10 +519,9 @@ params
 
 .then(()=>{
 
-btn.innerText=
-"✅ Order Confirmed!";
+btn.innerText="✅ Order Confirmed!";
 
-alert("Order Sent!");
+alert("✅ Order sent successfully!");
 
 
 cart=[];
@@ -542,24 +543,29 @@ btn.innerText="📩 Place Order";
 
 btn.disabled=false;
 
-},2000);
+},2500);
 
 
 })
 
-
 .catch(()=>{
 
-btn.innerText="❌ Failed";
+btn.innerText="❌ Failed - Try Again";
 
 btn.disabled=false;
 
-alert("Error sending");
+alert("Email send failed");
 
 });
 
 }
 
+
+/* INIT */
+
+renderProducts();
+renderCart();
+updateCartCount();
 
 </script>
 
