@@ -8,8 +8,8 @@
   *{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,sans-serif;}
   
   body {
-    background: linear-gradient(135deg, #f8f0f8, #fff0f5, #f5e9ff);
-    color: #333;  /* dark text for readability */
+    background: linear-gradient(135deg, #fff0f5, #ffe4f0, #f8e0f8); /* pink එක වැඩි කළා */
+    color: #222;  /* dark text – හොඳින් පේනවා */
     overflow-x: hidden;
   }
 
@@ -18,18 +18,18 @@
     top: 0;
     z-index: 999;
     padding: 18px 6%;
-    background: rgba(248, 240, 248, 0.85);  /* light lavender transparent */
-    backdrop-filter: blur(10px);
+    background: rgba(255, 240, 245, 0.88);  /* light pink transparent */
+    backdrop-filter: blur(12px);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid rgba(0,0,0,0.08);
+    border-bottom: 1px solid rgba(255, 105, 180, 0.2);
   }
 
   .logo {
     font-size: 1.8rem;
     font-weight: 800;
-    background: linear-gradient(90deg, #d94fd8, #ffae00, #d94fd8); /* darker pink-gold */
+    background: linear-gradient(90deg, #ff69b4, #ff8c00, #ff69b4); /* vibrant pink-orange */
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -42,10 +42,10 @@
     font-weight: 500;
     transition: .3s;
   }
-  nav a:hover {color: #d94fd8;}
+  nav a:hover {color: #ff69b4;}
 
   .cart-btn {
-    background: linear-gradient(90deg, #ff79d8, #ffae00);
+    background: linear-gradient(90deg, #ff69b4, #ff8c00);
     border: none;
     padding: 10px 18px;
     border-radius: 30px;
@@ -56,14 +56,14 @@
   }
   .cart-btn:hover {
     transform: scale(1.05);
-    box-shadow: 0 0 18px rgba(217, 79, 216, 0.4);
+    box-shadow: 0 0 20px rgba(255, 105, 180, 0.5);
   }
 
   .hero {padding: 70px 6%; text-align: center;}
   .hero h1 {
     font-size: clamp(2.8rem,8vw,5rem);
     font-weight: 900;
-    background: linear-gradient(90deg, #333, #d94fd8, #ffae00, #333);
+    background: linear-gradient(90deg, #ff1493, #ff69b4, #ff8c00, #ff1493);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -72,7 +72,6 @@
     margin-top: 15px;
     font-size: 1.2rem;
     color: #555;
-    opacity: .9;
   }
 
   .search-box {
@@ -87,12 +86,12 @@
   .search-box select {
     padding: 12px 15px;
     border-radius: 10px;
-    border: 1px solid #ddd;
+    border: 1px solid #ffb6c1;
     outline: none;
     font-size: 1rem;
     width: 100%;
     background: white;
-    color: #333;
+    color: #222;
   }
   .search-box select {width: 220px; cursor: pointer;}
 
@@ -101,7 +100,7 @@
     text-align: center;
     font-size: 2.5rem;
     margin-bottom: 30px;
-    color: #d94fd8;
+    color: #ff69b4; /* pink heading */
   }
 
   .product-grid {
@@ -111,18 +110,18 @@
   }
 
   .card {
-    background: rgba(255, 255, 255, 0.75);
-    border: 1px solid rgba(217, 79, 216, 0.2);
+    background: rgba(255, 245, 247, 0.85);
+    border: 1px solid #ffb6c1;
     border-radius: 18px;
     padding: 18px;
     transition: .3s;
     backdrop-filter: blur(12px);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    box-shadow: 0 4px 20px rgba(255, 105, 180, 0.1);
   }
   .card:hover {
     transform: translateY(-10px);
-    border-color: rgba(217, 79, 216, 0.4);
-    box-shadow: 0 8px 30px rgba(217, 79, 216, 0.15);
+    border-color: #ff69b4;
+    box-shadow: 0 8px 30px rgba(255, 105, 180, 0.2);
   }
   .card img {
     width: 100%;
@@ -138,14 +137,13 @@
   .card p {
     margin-top: 6px;
     font-size: 1rem;
-    color: #666;
-    opacity: .9;
+    color: #555;
   }
   .price {
     margin-top: 10px;
     font-size: 1.2rem;
     font-weight: 800;
-    color: #e07b00;
+    color: #ff4500; /* vibrant orange-pink */
   }
   .btn {
     margin-top: 14px;
@@ -156,42 +154,42 @@
     cursor: pointer;
     font-size: 1rem;
     font-weight: 700;
-    background: linear-gradient(90deg, #ff79d8, #ffae00);
+    background: linear-gradient(90deg, #ff69b4, #ff8c00);
     color: #000;
     transition: .3s;
   }
   .btn:hover {
     transform: scale(1.03);
-    box-shadow: 0 0 18px rgba(255, 174, 0, 0.4);
+    box-shadow: 0 0 20px rgba(255, 105, 180, 0.5);
   }
 
-  /* CART SIDEBAR - Light version */
+  /* CART SIDEBAR - Pinkish light */
   .cart-sidebar {
     position: fixed;
     top: 0;
     right: -450px;
     width: 400px;
     height: 100%;
-    background: rgba(248, 240, 248, 0.98);
+    background: rgba(255, 240, 245, 0.97);
     backdrop-filter: blur(15px);
     padding: 20px;
     transition: .4s;
     z-index: 9999;
-    border-left: 1px solid rgba(0,0,0,0.1);
+    border-left: 1px solid #ffb6c1;
     overflow-y: auto;
-    color: #333;
+    color: #222;
   }
   .cart-sidebar.active {right: 0;}
   .cart-header {display: flex; justify-content: space-between; align-items: center;}
-  .cart-header h2 {font-size: 1.6rem; color: #d94fd8;}
-  .close-btn {cursor: pointer; font-size: 1.8rem; font-weight: 800; color: #d94fd8;}
+  .cart-header h2 {font-size: 1.6rem; color: #ff69b4;}
+  .close-btn {cursor: pointer; font-size: 1.8rem; font-weight: 800; color: #ff69b4;}
   .cart-items {margin-top: 20px;}
   .cart-item {
-    background: rgba(255,255,255,0.6);
+    background: rgba(255,255,255,0.7);
     padding: 12px;
     border-radius: 12px;
     margin-bottom: 15px;
-    border: 1px solid rgba(0,0,0,0.08);
+    border: 1px solid #ffb6c1;
   }
   .cart-item h4 {font-size: 1rem; color: #333;}
   .cart-item p {font-size: .95rem; color: #555; margin-top: 5px;}
@@ -203,7 +201,7 @@
     gap: 5px;
   }
   .qty-btn, .remove-btn {
-    background: #ff79d8;
+    background: #ff69b4;
     border: none;
     padding: 6px 10px;
     border-radius: 8px;
@@ -211,34 +209,34 @@
     font-weight: 800;
     color: #000;
   }
-  .remove-btn {background: #ffae00;}
+  .remove-btn {background: #ff8c00;}
 
   .total-box {
     margin-top: 20px;
     padding: 15px;
     border-radius: 12px;
-    background: rgba(255,255,255,0.6);
-    border: 1px solid rgba(0,0,0,0.08);
+    background: rgba(255,255,255,0.7);
+    border: 1px solid #ffb6c1;
   }
-  .total-box h3 {font-size: 1.3rem; color: #d94fd8;}
+  .total-box h3 {font-size: 1.3rem; color: #ff69b4;}
 
   .checkout {
     margin-top: 20px;
     padding: 15px;
     border-radius: 12px;
-    background: rgba(255,255,255,0.6);
-    border: 1px solid rgba(0,0,0,0.08);
+    background: rgba(255,255,255,0.7);
+    border: 1px solid #ffb6c1;
   }
-  .checkout h3 {color: #d94fd8; margin-bottom: 10px;}
+  .checkout h3 {color: #ff69b4; margin-bottom: 10px;}
   .checkout input, .checkout textarea {
     width: 100%;
     padding: 10px;
     margin-top: 10px;
     border-radius: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid #ffb6c1;
     outline: none;
     background: white;
-    color: #333;
+    color: #222;
   }
   .checkout textarea {height: 80px; resize: none;}
 
@@ -251,11 +249,11 @@
     cursor: pointer;
     font-size: 1.05rem;
     font-weight: 800;
-    background: linear-gradient(90deg, #ffae00, #ff79d8);
+    background: linear-gradient(90deg, #ff8c00, #ff69b4);
     color: #000;
   }
   .order-btn:hover {
-    box-shadow: 0 0 20px rgba(255, 121, 216, 0.4);
+    box-shadow: 0 0 20px rgba(255, 105, 180, 0.5);
     transform: scale(1.02);
   }
 
@@ -267,7 +265,7 @@
     color: #555;
   }
 
-  /* Toast notification - light mode එකට visible වෙන්න */
+  /* Toast */
   #toast {
     position: fixed;
     bottom: 30px;
@@ -287,8 +285,8 @@
     text-align: center;
   }
   #toast.show {opacity: 1; bottom: 60px;}
-  #toast.success {border-left: 5px solid #ffae00; color: #ffae00;}
-  #toast.error {border-left: 5px solid #ff4fd8; color: #ff4fd8;}
+  #toast.success {border-left: 5px solid #ff8c00; color: #ff8c00;}
+  #toast.error {border-left: 5px solid #ff69b4; color: #ff69b4;}
 </style>
 </head>
 <body>
@@ -359,7 +357,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <script>
-// ඔයාගේ original script එකම තියෙනවා – කිසිම change එකක් නෑ (ඒක already perfect)
 emailjs.init("W_o_RiuSlVn_zCxlp");
 
 let products = [];
@@ -370,7 +367,7 @@ fetch('https://script.google.com/macros/s/AKfycby0FNsa6h84fanuT5xgOD__MH8L69-ORZ
     renderProducts();
   })
   .catch(error => {
-    document.getElementById('productGrid').innerHTML = '<p style="text-align:center; color:#d94fd8; font-size:1.2rem;">Products load කරන්න බැරි වුණා 😢 Refresh කරලා බලන්න</p>';
+    document.getElementById('productGrid').innerHTML = '<p style="text-align:center; color:#ff69b4; font-size:1.2rem;">Products load කරන්න බැරි වුණා 😢 Refresh කරලා බලන්න</p>';
   });
 
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
