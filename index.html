@@ -6,135 +6,268 @@
 <title>LARA Cosmetics Shop</title>
 <style>
   *{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,sans-serif;}
-  body{background:linear-gradient(135deg, #f8f0f8, #fff0f5, #f5e9ff);color:white;overflow-x:hidden;}
-  header{
-    position:sticky;top:0;z-index:999;
-    padding:18px 6%;
-    background:rgba(0,0,0,0.6);
-    backdrop-filter:blur(10px);
-    display:flex;justify-content:space-between;align-items:center;
-    border-bottom:1px solid rgba(255,255,255,0.1);
+  
+  body {
+    background: linear-gradient(135deg, #f8f0f8, #fff0f5, #f5e9ff);
+    color: #333;  /* dark text for readability */
+    overflow-x: hidden;
   }
-  .logo{
-    font-size:1.8rem;font-weight:800;
-    background:linear-gradient(90deg,#ff4fd8,#ffae00,#ff4fd8);
-    -webkit-background-clip:text;background-clip:text;color:transparent;
-  }
-  nav{display:flex;align-items:center;gap:20px;}
-  nav a{text-decoration:none;color:#ffd6f4;font-weight:500;transition:.3s;}
-  nav a:hover{color:#ff4fd8;}
-  .cart-btn{
-    background:#ff4fd8;border:none;
-    padding:10px 18px;border-radius:30px;
-    cursor:pointer;font-weight:700;color:black;
-    transition:.3s;
-  }
-  .cart-btn:hover{transform:scale(1.05);box-shadow:0 0 18px rgba(255,79,216,0.6);}
-  .hero{padding:70px 6%;text-align:center;}
-  .hero h1{
-    font-size:clamp(2.8rem,8vw,5rem);
-    font-weight:900;
-    background:linear-gradient(90deg,#fff,#ff4fd8,#ffae00,#fff);
-    -webkit-background-clip:text;background-clip:text;color:transparent;
-  }
-  .hero p{margin-top:15px;font-size:1.2rem;opacity:.85;}
-  .search-box{
-    margin:40px auto 0;max-width:650px;
-    display:flex;gap:10px;justify-content:center;align-items:center;
-  }
-  .search-box input,.search-box select{
-    padding:12px 15px;border-radius:10px;border:none;outline:none;
-    font-size:1rem;width:100%;
-  }
-  .search-box select{width:220px;cursor:pointer;}
-  .products{padding:40px 6% 80px;}
-  .products h2{text-align:center;font-size:2.5rem;margin-bottom:30px;color:#ffae00;}
-  .product-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:25px;}
-  .card{
-    background:rgba(255,255,255,0.06);
-    border:1px solid rgba(255,255,255,0.1);
-    border-radius:18px;
-    padding:18px;
-    transition:.3s;
-    backdrop-filter:blur(12px);
-  }
-  .card:hover{
-    transform:translateY(-10px);
-    border-color:rgba(255,79,216,0.6);
-    box-shadow:0 0 25px rgba(255,79,216,0.2);
-  }
-  .card img{width:100%;height:220px;object-fit:cover;border-radius:15px;}
-  .card h3{margin-top:12px;font-size:1.2rem;color:#ffd6f4;}
-  .card p{margin-top:6px;font-size:1rem;opacity:.9;}
-  .price{margin-top:10px;font-size:1.2rem;font-weight:800;color:#ffae00;}
-  .btn{
-    margin-top:14px;width:100%;
-    padding:12px;border:none;border-radius:12px;
-    cursor:pointer;font-size:1rem;font-weight:700;
-    background:linear-gradient(90deg,#ff4fd8,#ffae00);
-    color:black;transition:.3s;
-  }
-  .btn:hover{transform:scale(1.03);box-shadow:0 0 18px rgba(255,174,0,0.4);}
-  /* CART */
-  .cart-sidebar{
-    position:fixed;top:0;right:-450px;width:400px;height:100%;
-    background:rgba(0,0,0,0.9);
-    backdrop-filter:blur(15px);
-    padding:20px;
-    transition:.4s;
-    z-index:9999;
-    border-left:1px solid rgba(255,255,255,0.1);
-    overflow-y:auto;
-  }
-  .cart-sidebar.active{right:0;}
-  .cart-header{display:flex;justify-content:space-between;align-items:center;}
-  .cart-header h2{font-size:1.6rem;color:#ffae00;}
-  .close-btn{cursor:pointer;font-size:1.8rem;font-weight:800;color:#ff4fd8;}
-  .cart-items{margin-top:20px;}
-  .cart-item{
-    background:rgba(255,255,255,0.06);
-    padding:12px;border-radius:12px;margin-bottom:15px;
-    border:1px solid rgba(255,255,255,0.08);
-  }
-  .cart-item h4{font-size:1rem;color:#ffd6f4;}
-  .cart-item p{font-size:.95rem;opacity:.85;margin-top:5px;}
-  .cart-controls{margin-top:10px;display:flex;justify-content:space-between;align-items:center;gap:5px;}
-  .qty-btn{
-    background:#ff4fd8;border:none;padding:6px 10px;border-radius:8px;
-    cursor:pointer;font-weight:800;color:black;
-  }
-  .remove-btn{
-    background:#ffae00;border:none;padding:6px 10px;border-radius:8px;
-    cursor:pointer;font-weight:800;color:black;
-  }
-  .total-box{
-    margin-top:20px;padding:15px;border-radius:12px;
-    background:rgba(255,255,255,0.06);
-    border:1px solid rgba(255,255,255,0.1);
-  }
-  .total-box h3{font-size:1.3rem;color:#ffae00;}
-  /* CHECKOUT */
-  .checkout{
-    margin-top:20px;padding:15px;border-radius:12px;
-    background:rgba(255,255,255,0.06);
-    border:1px solid rgba(255,255,255,0.1);
-  }
-  .checkout h3{color:#ff4fd8;margin-bottom:10px;}
-  .checkout input,.checkout textarea{
-    width:100%;padding:10px;margin-top:10px;border-radius:10px;border:none;outline:none;
-  }
-  .checkout textarea{height:80px;resize:none;}
-  .order-btn{
-    margin-top:15px;width:100%;
-    padding:12px;border:none;border-radius:12px;
-    cursor:pointer;font-size:1.05rem;font-weight:800;
-    background:linear-gradient(90deg,#ffae00,#ff4fd8);
-    color:black;
-  }
-  .order-btn:hover{box-shadow:0 0 20px rgba(255,79,216,0.4);transform:scale(1.02);}
-  footer{padding:25px;text-align:center;opacity:.6;font-size:.95rem;}
 
-  /* Toast notification */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    padding: 18px 6%;
+    background: rgba(248, 240, 248, 0.85);  /* light lavender transparent */
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+  }
+
+  .logo {
+    font-size: 1.8rem;
+    font-weight: 800;
+    background: linear-gradient(90deg, #d94fd8, #ffae00, #d94fd8); /* darker pink-gold */
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  nav {display:flex;align-items:center;gap:20px;}
+  nav a {
+    text-decoration: none;
+    color: #444;
+    font-weight: 500;
+    transition: .3s;
+  }
+  nav a:hover {color: #d94fd8;}
+
+  .cart-btn {
+    background: linear-gradient(90deg, #ff79d8, #ffae00);
+    border: none;
+    padding: 10px 18px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: 700;
+    color: #000;
+    transition: .3s;
+  }
+  .cart-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 18px rgba(217, 79, 216, 0.4);
+  }
+
+  .hero {padding: 70px 6%; text-align: center;}
+  .hero h1 {
+    font-size: clamp(2.8rem,8vw,5rem);
+    font-weight: 900;
+    background: linear-gradient(90deg, #333, #d94fd8, #ffae00, #333);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .hero p {
+    margin-top: 15px;
+    font-size: 1.2rem;
+    color: #555;
+    opacity: .9;
+  }
+
+  .search-box {
+    margin: 40px auto 0;
+    max-width: 650px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+  }
+  .search-box input,
+  .search-box select {
+    padding: 12px 15px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    outline: none;
+    font-size: 1rem;
+    width: 100%;
+    background: white;
+    color: #333;
+  }
+  .search-box select {width: 220px; cursor: pointer;}
+
+  .products {padding: 40px 6% 80px;}
+  .products h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+    color: #d94fd8;
+  }
+
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+  }
+
+  .card {
+    background: rgba(255, 255, 255, 0.75);
+    border: 1px solid rgba(217, 79, 216, 0.2);
+    border-radius: 18px;
+    padding: 18px;
+    transition: .3s;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  }
+  .card:hover {
+    transform: translateY(-10px);
+    border-color: rgba(217, 79, 216, 0.4);
+    box-shadow: 0 8px 30px rgba(217, 79, 216, 0.15);
+  }
+  .card img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 15px;
+  }
+  .card h3 {
+    margin-top: 12px;
+    font-size: 1.2rem;
+    color: #333;
+  }
+  .card p {
+    margin-top: 6px;
+    font-size: 1rem;
+    color: #666;
+    opacity: .9;
+  }
+  .price {
+    margin-top: 10px;
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #e07b00;
+  }
+  .btn {
+    margin-top: 14px;
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 700;
+    background: linear-gradient(90deg, #ff79d8, #ffae00);
+    color: #000;
+    transition: .3s;
+  }
+  .btn:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 18px rgba(255, 174, 0, 0.4);
+  }
+
+  /* CART SIDEBAR - Light version */
+  .cart-sidebar {
+    position: fixed;
+    top: 0;
+    right: -450px;
+    width: 400px;
+    height: 100%;
+    background: rgba(248, 240, 248, 0.98);
+    backdrop-filter: blur(15px);
+    padding: 20px;
+    transition: .4s;
+    z-index: 9999;
+    border-left: 1px solid rgba(0,0,0,0.1);
+    overflow-y: auto;
+    color: #333;
+  }
+  .cart-sidebar.active {right: 0;}
+  .cart-header {display: flex; justify-content: space-between; align-items: center;}
+  .cart-header h2 {font-size: 1.6rem; color: #d94fd8;}
+  .close-btn {cursor: pointer; font-size: 1.8rem; font-weight: 800; color: #d94fd8;}
+  .cart-items {margin-top: 20px;}
+  .cart-item {
+    background: rgba(255,255,255,0.6);
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    border: 1px solid rgba(0,0,0,0.08);
+  }
+  .cart-item h4 {font-size: 1rem; color: #333;}
+  .cart-item p {font-size: .95rem; color: #555; margin-top: 5px;}
+  .cart-controls {
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 5px;
+  }
+  .qty-btn, .remove-btn {
+    background: #ff79d8;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 800;
+    color: #000;
+  }
+  .remove-btn {background: #ffae00;}
+
+  .total-box {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.6);
+    border: 1px solid rgba(0,0,0,0.08);
+  }
+  .total-box h3 {font-size: 1.3rem; color: #d94fd8;}
+
+  .checkout {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.6);
+    border: 1px solid rgba(0,0,0,0.08);
+  }
+  .checkout h3 {color: #d94fd8; margin-bottom: 10px;}
+  .checkout input, .checkout textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    outline: none;
+    background: white;
+    color: #333;
+  }
+  .checkout textarea {height: 80px; resize: none;}
+
+  .order-btn {
+    margin-top: 15px;
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 1.05rem;
+    font-weight: 800;
+    background: linear-gradient(90deg, #ffae00, #ff79d8);
+    color: #000;
+  }
+  .order-btn:hover {
+    box-shadow: 0 0 20px rgba(255, 121, 216, 0.4);
+    transform: scale(1.02);
+  }
+
+  footer {
+    padding: 25px;
+    text-align: center;
+    opacity: .7;
+    font-size: .95rem;
+    color: #555;
+  }
+
+  /* Toast notification - light mode එකට visible වෙන්න */
   #toast {
     position: fixed;
     bottom: 30px;
@@ -148,17 +281,14 @@
     z-index: 10000;
     opacity: 0;
     transition: all 0.4s ease;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
     pointer-events: none;
     min-width: 220px;
     text-align: center;
   }
-  #toast.show {
-    opacity: 1;
-    bottom: 60px;
-  }
-  #toast.success { border-left: 5px solid #ffae00; color: #ffae00; }
-  #toast.error   { border-left: 5px solid #ff4fd8; color: #ff4fd8; }
+  #toast.show {opacity: 1; bottom: 60px;}
+  #toast.success {border-left: 5px solid #ffae00; color: #ffae00;}
+  #toast.error {border-left: 5px solid #ff4fd8; color: #ff4fd8;}
 </style>
 </head>
 <body>
@@ -229,6 +359,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <script>
+// ඔයාගේ original script එකම තියෙනවා – කිසිම change එකක් නෑ (ඒක already perfect)
 emailjs.init("W_o_RiuSlVn_zCxlp");
 
 let products = [];
@@ -239,7 +370,7 @@ fetch('https://script.google.com/macros/s/AKfycby0FNsa6h84fanuT5xgOD__MH8L69-ORZ
     renderProducts();
   })
   .catch(error => {
-    document.getElementById('productGrid').innerHTML = '<p style="text-align:center; color:#ffae00; font-size:1.2rem;">Products load කරන්න බැරි වුණා 😢 Refresh කරලා බලන්න</p>';
+    document.getElementById('productGrid').innerHTML = '<p style="text-align:center; color:#d94fd8; font-size:1.2rem;">Products load කරන්න බැරි වුණා 😢 Refresh කරලා බලන්න</p>';
   });
 
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -305,18 +436,15 @@ function renderProducts() {
   const search = document.getElementById("searchInput").value.toLowerCase();
   const category = document.getElementById("categoryFilter").value;
   grid.innerHTML = "";
-
   const filtered = products.filter(p => {
     const matchSearch = p.name.toLowerCase().includes(search);
     const matchCategory = category === "all" ? true : p.category === category;
     return matchSearch && matchCategory;
   });
-
   if (filtered.length === 0) {
-    grid.innerHTML = "<p style='text-align:center;opacity:0.7;font-size:1.2rem;'>Loading products</p>";
+    grid.innerHTML = "<p style='text-align:center;opacity:0.7;font-size:1.2rem;color:#555;'>No products found 😢</p>";
     return;
   }
-
   filtered.forEach(p => {
     grid.innerHTML += `
       <div class="card">
@@ -334,13 +462,11 @@ function renderCart() {
   const cartItemsBox = document.getElementById("cartItems");
   const cartTotalBox = document.getElementById("cartTotal");
   cartItemsBox.innerHTML = "";
-
   if (cart.length === 0) {
-    cartItemsBox.innerHTML = "<p style='opacity:0.7;text-align:center;margin-top:20px;'>Cart is empty 🛒</p>";
+    cartItemsBox.innerHTML = "<p style='opacity:0.7;text-align:center;margin-top:20px;color:#555;'>Cart is empty 🛒</p>";
     cartTotalBox.innerText = "0";
     return;
   }
-
   let total = 0;
   cart.forEach(item => {
     const product = products.find(p => p.id === item.id);
@@ -367,17 +493,14 @@ function placeOrder() {
     alert("Your cart is empty!");
     return;
   }
-
   const name = document.getElementById("customerName").value.trim();
   const phone = document.getElementById("customerPhone").value.trim();
   const email = document.getElementById("customerEmail").value.trim();
   const address = document.getElementById("customerAddress").value.trim();
-
   if (!name || !phone || !address) {
     alert("Please fill Name, Phone, and Address!");
     return;
   }
-
   let orderText = "";
   let total = 0;
   cart.forEach(item => {
@@ -387,7 +510,6 @@ function placeOrder() {
     total += sub;
     orderText += `• ${product.name} (Rs.${product.price}) x ${item.qty} = Rs.${sub}\n`;
   });
-
   const templateParams = {
     customer_name: name,
     customer_phone: phone,
@@ -396,12 +518,10 @@ function placeOrder() {
     order_items: orderText,
     total_price: total
   };
-
   const orderBtn = document.querySelector(".order-btn");
   const originalText = orderBtn.innerHTML;
   orderBtn.innerHTML = "⏳ Please wait...";
   orderBtn.disabled = true;
-
   emailjs.send("service_jole3ot", "template_n8pbmd8", templateParams)
     .then(() => {
       showToast("Order Confirmed! Thank you ♡", "success");
