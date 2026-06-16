@@ -195,7 +195,7 @@
             border: none;
         }
 
-        /* Modal */
+        /* Modal - fully fixed for details */
         .modal {
             display: none;
             position: fixed;
@@ -204,8 +204,8 @@
             top: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(3px);
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
             justify-content: center;
             align-items: center;
             padding: 20px;
@@ -224,6 +224,7 @@
             max-height: 90vh;
             overflow-y: auto;
             position: relative;
+            box-shadow: 0 25px 40px rgba(0,0,0,0.2);
         }
 
         .close-modal {
@@ -234,6 +235,25 @@
             cursor: pointer;
             background: none;
             border: none;
+            color: #5a5a5a;
+            transition: 0.2s;
+        }
+        .close-modal:hover { color: #000; }
+
+        #modalImage {
+            width: 100%;
+            max-height: 280px;
+            object-fit: contain;
+            border-radius: 24px;
+            background: #fafafa;
+            margin-bottom: 16px;
+        }
+
+        .modal-price {
+            font-size: 1.9rem;
+            font-weight: 800;
+            color: #000;
+            margin: 8px 0;
         }
 
         .colour-chips {
@@ -252,16 +272,19 @@
             border: 1px solid #ccc;
             background: #f9f9f9;
             cursor: pointer;
+            transition: 0.1s;
         }
 
         .colour-chip.selected {
             border: 2px solid #000;
+            background: #f0f0f0;
         }
 
         .colour-chip .dot {
             width: 18px;
             height: 18px;
             border-radius: 50%;
+            display: inline-block;
         }
 
         /* Cart Sidebar */
@@ -289,6 +312,16 @@
             padding: 14px;
             border-radius: 20px;
             margin-bottom: 14px;
+            border: 1px solid #ececec;
+        }
+
+        .qty-btn, .remove-btn {
+            background: #eaeef2;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
         }
 
         .total-box {
@@ -305,6 +338,7 @@
             margin-top: 12px;
             border-radius: 60px;
             border: 1px solid #ccc;
+            font-family: 'Poppins', sans-serif;
         }
 
         .order-btn {
@@ -339,7 +373,7 @@
             bottom: 40px;
         }
 
-        /* Chatbot Widget Styles */
+        /* Chatbot Widget */
         .chat-widget {
             position: fixed;
             bottom: 24px;
@@ -558,19 +592,19 @@
         </div>
     </div>
 
-    <!-- Product Modal -->
+    <!-- Product Modal - FIXED FOR DETAILS -->
     <div class="modal" id="productModal">
         <div class="modal-content">
             <button class="close-modal" onclick="closeModal()">×</button>
             <img id="modalImage" src="" alt="Product detail" />
             <h2 id="modalName"></h2>
-            <p id="modalCategory" style="color:#5a5a5a;"></p>
+            <p id="modalCategory" style="color:#5a5a5a; margin-top:4px;"></p>
             <div class="modal-price">Rs. <span id="modalPrice">0</span></div>
             <div class="colour-section">
-                <h4>Shade / Colour</h4>
+                <h4 style="margin-top:8px;">Shade / Colour</h4>
                 <div id="modalColours" class="colour-chips"></div>
             </div>
-            <div id="modalDetails" style="margin-top:15px;"></div>
+            <div id="modalDetails" style="margin-top:15px; color:#3a3a3a; line-height:1.5;"></div>
             <button class="btn" style="margin-top:24px;" onclick="addToCartFromModal()"><i class="fas fa-cart-plus"></i> Add to Cart</button>
         </div>
     </div>
@@ -655,7 +689,6 @@
                     products.push({ id: doc.id, ...data });
                     if (data.category) categoriesSet.add(data.category);
                 });
-                // Update category dropdown
                 const currentCat = categoryFilter.value;
                 categoryFilter.innerHTML = '<option value="all">All Categories</option>';
                 [...categoriesSet].sort().forEach(cat => {
@@ -716,15 +749,23 @@
         });
         categoryFilter.addEventListener('change', renderProducts);
 
+        // ---------- FIXED MODAL OPEN WITH FULL DETAILS ----------
         window.openProductModal = (productId) => {
             currentProduct = products.find(p => p.id === productId);
-            if (!currentProduct) return;
+            if (!currentProduct) {
+                console.warn("Product not found:", productId);
+                return;
+            }
             selectedColour = null;
-            document.getElementById('modalImage').src = currentProduct.image || 'https://placehold.co/500x400/f8f8f8/ddd?text=Preview';
-            document.getElementById('modalName').textContent = currentProduct.name;
+            // Set image
+            const modalImg = document.getElementById('modalImage');
+            modalImg.src = currentProduct.image || 'https://placehold.co/500x400/f8f8f8/ddd?text=No+Preview';
+            modalImg.alt = currentProduct.name;
+            document.getElementById('modalName').textContent = currentProduct.name || '';
             document.getElementById('modalPrice').textContent = (currentProduct.price || 0).toLocaleString();
             document.getElementById('modalCategory').textContent = `📂 ${currentProduct.category || 'General'}`;
             document.getElementById('modalDetails').textContent = currentProduct.description || 'Silky finish & premium quality.';
+            
             const coloursDiv = document.getElementById('modalColours');
             coloursDiv.innerHTML = '';
             const colours = currentProduct.colours || [];
@@ -737,7 +778,8 @@
                     const chip = document.createElement('span');
                     chip.className = 'colour-chip';
                     chip.innerHTML = `<span class="dot" style="background:${hex};"></span>${name}`;
-                    chip.onclick = () => {
+                    chip.onclick = (e) => {
+                        e.stopPropagation();
                         document.querySelectorAll('.colour-chip').forEach(c => c.classList.remove('selected'));
                         chip.classList.add('selected');
                         selectedColour = { name, hex };
@@ -746,14 +788,18 @@
                 });
             }
             modal.classList.add('show');
+            document.body.style.overflow = 'hidden'; // prevent background scroll
         };
 
         window.closeModal = () => {
             modal.classList.remove('show');
             currentProduct = null;
             selectedColour = null;
+            document.body.style.overflow = '';
         };
-        modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
 
         window.quickAddToCart = (productId) => {
             const product = products.find(p => p.id === productId);
@@ -818,7 +864,17 @@
                 totalCart += subtotal;
                 const colourInfo = item.colour ? item.colour.name : '';
                 const colourHex = item.colour ? item.colour.hex : '';
-                html += `<div class="cart-item"><h4>${product.name}</h4>${colourInfo ? `<p><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:${colourHex};margin-right:6px;"></span>${colourInfo}</p>` : ''}<p>Rs. ${price.toLocaleString()} × ${item.quantity} = <strong>Rs. ${subtotal.toLocaleString()}</strong></p><div style="display:flex; gap:8px;"><button class="qty-btn" onclick="changeQuantity(${idx}, -1)">−</button><span>${item.quantity}</span><button class="qty-btn" onclick="changeQuantity(${idx}, 1)">+</button><button class="remove-btn" onclick="removeFromCart(${idx})">Remove</button></div></div>`;
+                html += `<div class="cart-item">
+                            <h4 style="font-weight:600;">${product.name}</h4>
+                            ${colourInfo ? `<p style="font-size:0.8rem; margin-top:4px;"><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:${colourHex};margin-right:6px;"></span>${colourInfo}</p>` : ''}
+                            <p>Rs. ${price.toLocaleString()} × ${item.quantity} = <strong>Rs. ${subtotal.toLocaleString()}</strong></p>
+                            <div style="display:flex; gap:8px; margin-top:10px;">
+                                <button class="qty-btn" onclick="changeQuantity(${idx}, -1)">−</button>
+                                <span style="padding:0 6px;">${item.quantity}</span>
+                                <button class="qty-btn" onclick="changeQuantity(${idx}, 1)">+</button>
+                                <button class="remove-btn" onclick="removeFromCart(${idx})"><i class="fas fa-trash-alt"></i> Remove</button>
+                            </div>
+                        </div>`;
             });
             cartItemsEl.innerHTML = html;
             cartTotalEl.textContent = totalCart.toLocaleString();
@@ -829,7 +885,7 @@
             if (cartSidebar.classList.contains('active')) renderCartItems();
         };
 
-        // Order email function (simplified, same as original)
+        // Order email function
         async function sendOrderEmail(orderData) {
             if (!emailJsReady) return false;
             try {
@@ -839,7 +895,7 @@
                     order_date: new Date().toLocaleString('en-LK')
                 });
                 return true;
-            } catch(e) { return false; }
+            } catch(e) { console.error(e); return false; }
         }
 
         window.placeOrder = async () => {
@@ -872,51 +928,33 @@
         // ==================== CHATBOT INTELLIGENCE ====================
         async function getBotReply(userMessage) {
             const lowerMsg = userMessage.toLowerCase();
-            // Help & greeting
             if (lowerMsg.match(/^(hi|hello|hey|greetings)/)) return "Hello beauty! 👋 I'm LARA AI. Ask me about products, prices, shades, or new arrivals!";
-            if (lowerMsg.includes('help') || lowerMsg.includes('what can you do')) return "You can ask: 'lipsticks under 3000', 'price of matte lipstick', 'shades of [product]', 'new arrivals', 'show all perfumes', or 'skincare products'.";
-
-            // Filter by category
+            if (lowerMsg.includes('help') || lowerMsg.includes('what can you do')) return "You can ask: 'lipsticks under 3000', 'price of matte lipstick', 'shades of [product]', 'new arrivals', 'show all perfumes'.";
             let filtered = [...products];
             if (lowerMsg.includes('lipstick')) filtered = filtered.filter(p => p.category && p.category.toLowerCase().includes('lipstick'));
             else if (lowerMsg.includes('skincare')) filtered = filtered.filter(p => p.category && p.category.toLowerCase().includes('skincare'));
             else if (lowerMsg.includes('perfume')) filtered = filtered.filter(p => p.category && p.category.toLowerCase().includes('perfume'));
-            else if (lowerMsg.includes('makeup')) filtered = filtered.filter(p => p.category && p.category.toLowerCase().includes('makeup'));
-
-            // Price filter (under Rs X or X to Y)
             const underMatch = lowerMsg.match(/(?:under|below|less than)\s*rs\.?\s*(\d+)/i);
             if (underMatch) { let max = parseInt(underMatch[1]); filtered = filtered.filter(p => (p.price || 0) <= max); }
-            const rangeMatch = lowerMsg.match(/(\d+)\s*to\s*(\d+)/i);
-            if (rangeMatch) { let min = parseInt(rangeMatch[1]), max = parseInt(rangeMatch[2]); filtered = filtered.filter(p => (p.price || 0) >= min && (p.price || 0) <= max); }
-
-            // Specific product name query
             let exactProduct = null;
             for (let p of products) {
                 if (lowerMsg.includes(p.name.toLowerCase())) { exactProduct = p; break; }
             }
-            if (exactProduct && (lowerMsg.includes('price') || lowerMsg.includes('cost'))) {
-                return `💰 ${exactProduct.name} costs Rs. ${(exactProduct.price || 0).toLocaleString()}.`;
-            }
+            if (exactProduct && (lowerMsg.includes('price') || lowerMsg.includes('cost'))) return `💰 ${exactProduct.name} costs Rs. ${(exactProduct.price || 0).toLocaleString()}.`;
             if (exactProduct && (lowerMsg.includes('shade') || lowerMsg.includes('colour'))) {
                 const shades = (exactProduct.colours || []).map(c => typeof c === 'object' ? c.name : c).join(', ');
                 return shades ? `🎨 ${exactProduct.name} comes in: ${shades}.` : `${exactProduct.name} has no shade options.`;
             }
             if (exactProduct) {
-                let shadesText = '';
-                if (exactProduct.colours && exactProduct.colours.length) shadesText = ` Available shades: ${exactProduct.colours.map(c=>typeof c==='object'?c.name:c).join(', ')}.`;
+                let shadesText = (exactProduct.colours && exactProduct.colours.length) ? ` Available shades: ${exactProduct.colours.map(c=>typeof c==='object'?c.name:c).join(', ')}.` : '';
                 return `✨ **${exactProduct.name}** — Rs. ${(exactProduct.price||0).toLocaleString()}. ${exactProduct.description || 'Premium quality.'}${shadesText}`;
             }
-
-            // New arrivals
-            if (lowerMsg.includes('new arrival') || lowerMsg.includes('latest') || lowerMsg.includes('recent')) {
+            if (lowerMsg.includes('new arrival') || lowerMsg.includes('latest')) {
                 let sorted = [...products].sort((a,b)=> (b.createdAt?.seconds||0) - (a.createdAt?.seconds||0)).slice(0,5);
-                if (sorted.length) return `🆕 Newest: ${sorted.map(p=>p.name).join(', ')}.`;
-                else return "No new arrivals yet.";
+                return sorted.length ? `🆕 Newest: ${sorted.map(p=>p.name).join(', ')}.` : "No new arrivals yet.";
             }
-
-            // Show all products or category summary
-            if (lowerMsg.includes('all products') || lowerMsg.includes('show everything')) {
-                if (products.length === 0) return "No products available.";
+            if (lowerMsg.includes('all products')) {
+                if (!products.length) return "No products available.";
                 let names = products.slice(0,8).map(p=>p.name).join(', ');
                 return `🌟 Our collection includes: ${names}${products.length>8 ? ' and more.' : '.'} Ask for details!`;
             }
@@ -924,7 +962,7 @@
                 let list = filtered.slice(0,5).map(p=>`${p.name} (Rs.${(p.price||0).toLocaleString()})`).join('; ');
                 return `🌸 I found ${filtered.length} product(s). ${list}${filtered.length>5 ? ' ...' : ''}. Want more info?`;
             }
-            return "I couldn't find matching products. Try asking 'lipsticks under 5000', 'perfume shades', or type a product name.";
+            return "I couldn't find matching products. Try 'lipsticks under 5000' or type a product name.";
         }
 
         // Chat UI
