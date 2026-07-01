@@ -364,6 +364,7 @@
             cursor: pointer;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
             transition: 0.2s;
+            position: relative; /* for close button positioning */
         }
         .chat-toggle i {
             font-size: 28px;
@@ -372,6 +373,25 @@
         .chat-toggle:hover {
             transform: scale(1.05);
             background: #2c2c2c;
+        }
+        /* close button for the whole widget */
+        .chat-widget-close {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 22px;
+            height: 22px;
+            background: #e74c3c;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            line-height: 1;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            z-index: 10;
         }
         .chat-window {
             position: absolute;
@@ -561,8 +581,12 @@
     <div id="toast"></div>
 
     <!-- Chatbot Widget -->
-    <div class="chat-widget">
-        <div class="chat-toggle" id="chatToggleBtn" aria-label="Open chat"><i class="fas fa-robot"></i></div>
+    <div class="chat-widget" id="chatWidget">
+        <div class="chat-toggle" id="chatToggleBtn" aria-label="Open chat">
+            <i class="fas fa-robot"></i>
+            <!-- NEW: close button for entire widget -->
+            <span class="chat-widget-close" id="chatWidgetCloseBtn" title="Close chatbot">✕</span>
+        </div>
         <div class="chat-window" id="chatWindow">
             <div class="chat-header">
                 <h4><i class="fas fa-magic"></i> LARA Beauty AI</h4>
@@ -1295,6 +1319,11 @@
         // ==================== CHAT UI ====================
         const chatMessagesDiv = document.getElementById('chatMessages');
         const chatInput = document.getElementById('chatInput');
+        const chatWidget = document.getElementById('chatWidget');
+        const chatToggleBtn = document.getElementById('chatToggleBtn');
+        const chatWindow = document.getElementById('chatWindow');
+        const closeChatBtn = document.getElementById('closeChatBtn');
+        const chatWidgetCloseBtn = document.getElementById('chatWidgetCloseBtn');
 
         function addMessage(text, isUser) {
             const div = document.createElement('div');
@@ -1353,12 +1382,23 @@
             chatInput.focus();
         }
 
-        document.getElementById('chatToggleBtn').addEventListener('click', () => {
-            document.getElementById('chatWindow').classList.toggle('open');
+        // Toggle chat window open/close
+        chatToggleBtn.addEventListener('click', () => {
+            chatWindow.classList.toggle('open');
         });
-        document.getElementById('closeChatBtn').addEventListener('click', () => {
-            document.getElementById('chatWindow').classList.remove('open');
+
+        // Close chat window (header X button)
+        closeChatBtn.addEventListener('click', () => {
+            chatWindow.classList.remove('open');
         });
+
+        // NEW: Hide the entire chat widget (both toggle and window)
+        chatWidgetCloseBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent triggering toggle button
+            chatWidget.style.display = 'none';
+            // Optional: could also remove from DOM or store preference, but simple hide
+        });
+
         document.getElementById('sendChatBtn').addEventListener('click', sendChatMessage);
         chatInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
