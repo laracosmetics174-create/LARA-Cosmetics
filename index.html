@@ -12,6 +12,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-check-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <style>
         *{margin:0;padding:0;box-sizing:border-box}
@@ -82,7 +83,6 @@
         footer{text-align:center;padding:40px 20px;border-top:1px solid #e0e0e0}
         @media(max-width:768px){.product-grid{grid-template-columns:repeat(auto-fill,minmax(180px,1fr))}.chat-window{width:320px;height:460px}}
 
-        /* ===== LIPSTICK FINDER STYLES ===== */
         .lsf-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.65);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:100000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;padding:16px}
         .lsf-overlay.active{opacity:1;pointer-events:auto}
         .lsf-modal{background:#fff;border-radius:28px;width:100%;max-width:540px;max-height:88vh;overflow-y:auto;position:relative;box-shadow:0 30px 60px rgba(0,0,0,.35);padding:32px 24px 24px;transform:translateY(20px);transition:transform .3s}
@@ -144,7 +144,6 @@
     </style>
 </head>
 <body>
-    <!-- header, hero, products, about, footer, cart sidebar, product modal, toast, chat widget (all unchanged) -->
     <header>
         <div class="logo"><i class="fas fa-feather-alt"></i> LARA</div>
         <nav>
@@ -173,7 +172,6 @@
     </section>
     <footer>© 2025 LARA Cosmetics. All Rights Reserved. | Made with ❤️ in Sri Lanka</footer>
 
-    <!-- Cart Sidebar -->
     <div class="cart-sidebar" id="cartSidebar">
         <div class="cart-header" style="display:flex;justify-content:space-between;align-items:center;">
             <h2><i class="fas fa-shopping-bag"></i> Your Bag</h2>
@@ -191,7 +189,6 @@
         </div>
     </div>
 
-    <!-- Product Modal -->
     <div class="modal" id="productModal">
         <div class="modal-content">
             <button class="close-modal" onclick="closeModal()">×</button>
@@ -206,7 +203,6 @@
     </div>
     <div id="toast"></div>
 
-    <!-- Chatbot Widget -->
     <div class="chat-widget" id="chatWidget">
         <div class="chat-toggle" id="chatToggleBtn"><i class="fas fa-robot"></i><span class="chat-widget-close" id="chatWidgetCloseBtn">✕</span></div>
         <div class="chat-window" id="chatWindow">
@@ -216,7 +212,6 @@
         </div>
     </div>
 
-    <!-- Firebase Storage Helper -->
     <script>
         const LARA_STORAGE = (function () {
             let storageAvailable = false, storage = null;
@@ -261,7 +256,6 @@
         })();
     </script>
 
-    <!-- Lipstick Finder Script -->
     <script>
         (function () {
             'use strict';
@@ -415,9 +409,7 @@
         })();
     </script>
 
-    <!-- ========== ORIGINAL LARA SCRIPTS (FULL) ========== -->
     <script>
-        // ==================== SECURITY UTILITIES ====================
         function escapeHtml(unsafe) {
             if (typeof unsafe !== 'string') return '';
             return unsafe.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
@@ -441,7 +433,7 @@
             div.textContent = str;
             return div.textContent.trim();
         }
-        // ==================== FIREBASE CONFIG ====================
+
         const firebaseConfig = {
             apiKey: "AIzaSyAOqKpGbesbgeAfA2J_QGfomjTiY_FIfnA",
             authDomain: "lara-f5aed.firebaseapp.com",
@@ -451,8 +443,16 @@
             appId: "1:942336215471:web:7971423ac9d4cff776075a"
         };
         firebase.initializeApp(firebaseConfig);
+
+        const appCheck = firebase.appCheck();
+        appCheck.activate('YOUR_RECAPTCHA_SITE_KEY', true);
+
+        if (window.location.hostname === 'localhost') {
+            self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+        }
+
         const db = firebase.firestore();
-        // ==================== EMAILJS CONFIG ====================
+
         const EMAILJS_PUBLIC_KEY = 'W_o_RiuSlVn_zCxlp';
         const EMAILJS_SERVICE_ID = 'service_jole3ot';
         const EMAILJS_TEMPLATE_ID = 'template_n8pbmd8';
@@ -461,7 +461,7 @@
             emailjs.init(EMAILJS_PUBLIC_KEY);
             emailJsReady = true;
         }
-        // ==================== GLOBAL STATE ====================
+
         let products = [];
         let currentProduct = null;
         let selectedColour = null;
@@ -480,6 +480,7 @@
             cart = [];
             localStorage.removeItem('lara_cart_v5');
         }
+
         const productGrid = document.getElementById('productGrid');
         const searchInput = document.getElementById('searchInput');
         const categoryFilter = document.getElementById('categoryFilter');
@@ -489,12 +490,14 @@
         const cartTotalEl = document.getElementById('cartTotal');
         const toastEl = document.getElementById('toast');
         const modal = document.getElementById('productModal');
+
         function showToast(msg) {
             toastEl.textContent = sanitizeText(msg);
             toastEl.classList.add('show');
             clearTimeout(toastEl._timer);
             toastEl._timer = setTimeout(() => toastEl.classList.remove('show'), 3000);
         }
+
         async function loadTrainingData() {
             try {
                 const snap = await db.collection('chatbotTraining').get();
@@ -505,6 +508,7 @@
                 });
             } catch(e) {}
         }
+
         function setupRealtimeProducts() {
             db.collection('products').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
                 products = [];
@@ -538,6 +542,7 @@
                 productGrid.innerHTML = '<p style="text-align:center;">⚠️ Error loading products. Please refresh.</p>';
             });
         }
+
         function renderProducts() {
             const searchTerm = searchInput.value.toLowerCase().trim();
             const selectedCat = categoryFilter.value;
@@ -561,9 +566,11 @@
             });
             productGrid.innerHTML = html;
         }
+
         let searchDebounce;
         searchInput.addEventListener('input', () => { searchInput.value = searchInput.value.replace(/<[^>]*>/g, ''); clearTimeout(searchDebounce); searchDebounce = setTimeout(renderProducts, 300); });
         categoryFilter.addEventListener('change', renderProducts);
+
         window.openProductModal = (productId) => {
             currentProduct = products.find(p => p.id === productId);
             if (!currentProduct) return;
@@ -596,6 +603,7 @@
         window.closeModal = () => { modal.classList.remove('show'); currentProduct = null; selectedColour = null; };
         modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
         document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal.classList.contains('show')) closeModal(); });
+
         window.quickAddToCart = (productId) => {
             const product = products.find(p => p.id === productId);
             if (!product) return;
@@ -645,6 +653,7 @@
             cartTotalEl.textContent = totalCart.toLocaleString();
         }
         window.toggleCart = () => { cartSidebar.classList.toggle('active'); if (cartSidebar.classList.contains('active')) renderCartItems(); };
+
         async function sendOrderEmail(orderData) {
             if (!emailJsReady) return false;
             try {
@@ -661,6 +670,7 @@
                 return true;
             } catch(e) { return false; }
         }
+
         let lastOrderTime = 0;
         const ORDER_COOLDOWN_MS = 10000;
         window.placeOrder = async () => {
@@ -698,6 +708,7 @@
                 showToast('✅ Order sent! Check your email.');
             } else { showToast('❌ Email failed. Please try again or contact support.'); lastOrderTime = 0; }
         };
+
         let lastChatTime = 0;
         const CHAT_COOLDOWN_MS = 800;
         async function getBotReply(userMessage) {
@@ -747,13 +758,14 @@
             } catch(e) {}
             return "I'm still learning about that! 🤔\n\nTry asking:\n• 'Show lipsticks under Rs.5000'\n• 'What perfumes do you have?'\n• 'Price of [product name]'\n• 'New arrivals'\n\nI'll save your question and learn from it! 📚";
         }
+
         const chatMessagesDiv = document.getElementById('chatMessages');
         const chatInput = document.getElementById('chatInput');
-        const chatWidget = document.getElementById('chatWidget');
         const chatToggleBtn = document.getElementById('chatToggleBtn');
         const chatWindow = document.getElementById('chatWindow');
         const closeChatBtn = document.getElementById('closeChatBtn');
         const chatWidgetCloseBtn = document.getElementById('chatWidgetCloseBtn');
+
         function addMessage(text, isUser) {
             const div = document.createElement('div');
             div.className = 'message ' + (isUser ? 'user-msg' : 'bot-msg');
@@ -791,6 +803,7 @@
         document.getElementById('sendChatBtn').addEventListener('click', sendChatMessage);
         chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChatMessage(); } });
         chatInput.addEventListener('paste', (e) => { e.preventDefault(); const pastedText = (e.clipboardData || window.clipboardData).getData('text'); const cleanText = pastedText.replace(/<[^>]*>/g, ''); chatInput.value = cleanText.substring(0,500); });
+
         loadTrainingData();
         setupRealtimeProducts();
         renderCartItems();
